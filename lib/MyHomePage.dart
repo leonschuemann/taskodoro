@@ -21,15 +21,21 @@ class _MyHomePageState extends State<MyHomePage> {
           alignment: Alignment.centerLeft,
         ),
         actions: [
+          Spacer(),
           SizedBox(
-            width: 500,
+            width: 600,
             child: TextField(
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Enter a new task'
               ),
+              autofocus: true, // TODO: Use FocusNode to auto-focus when typing
+              onSubmitted: (str) {
+                throw ErrorDescription("Not yet implemented");
+              },
             ),
           ),
+          Spacer(),
           IconButton(
             onPressed: () {
               throw ErrorDescription("Not yet implemented");
