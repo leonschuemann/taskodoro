@@ -2,7 +2,23 @@ import 'package:taskodoro/priority.dart';
 import 'package:taskodoro/task.dart';
 import 'package:flutter/material.dart';
 
-class CardTask extends StatelessWidget { // TODO Change to StatefulWidget
+class CardTask extends StatefulWidget {
+  final Task task;
+  const CardTask(this.task, {super.key});
+
+  @override
+  State<StatefulWidget> createState() => _CardTaskState();
+}
+
+class _CardTaskState extends State<CardTask> {
+  late Task task;
+
+  @override
+  void initState() {
+    super.initState();
+    task = widget.task;
+  }
+
   @override
   Widget build(BuildContext context) {
     PriorityManager priorityManager = PriorityManager();
@@ -26,7 +42,9 @@ class CardTask extends StatelessWidget { // TODO Change to StatefulWidget
               Checkbox(
                 value: task.isDone,
                 onChanged: (value) {
-                  throw ErrorDescription("Not yet implemented");
+                  setState(() {
+                    task.isDone = value!;
+                  });
                 }
               ),
               const SizedBox(width: 6),
@@ -77,8 +95,4 @@ class CardTask extends StatelessWidget { // TODO Change to StatefulWidget
       ),
     );
   }
-
-  Task task;
-
-  CardTask(this.task, {super.key});
 }
