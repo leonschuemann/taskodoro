@@ -36,6 +36,7 @@ class _CardTaskState extends State<CardTask> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          SizedBox(height: 6),
           Row(
             children: [
               const SizedBox(width: 6),
@@ -84,13 +85,13 @@ class _CardTaskState extends State<CardTask> {
               )
             ],
           ),
-          Row(
+          task.description != null ? Row(
             children: [
               const SizedBox(width: 10),
               Text(task.description ?? ""),
             ],
-          ),
-          SizedBox(height: 6)
+          ) : SizedBox(),
+          SizedBox(height: 8)
         ],
       ),
     );
