@@ -23,13 +23,15 @@ class _CardTaskState extends State<CardTask> {
   Widget build(BuildContext context) {
     PriorityManager priorityManager = PriorityManager();
 
-    List<DropdownMenuEntry> priorities = [
+    List<DropdownMenuItem> priorities = [
       for (Priority priority in priorityManager.getPriorities())
-        DropdownMenuEntry(
-          value: priority.level,
-          label: priority.name
+        DropdownMenuItem(
+          value: priority.name,
+          child: Text(priority.name),
         )
     ];
+
+    String priority = priorityManager.getPriorities()[0].toString();
 
     return Card.filled(
       color: Theme.of(context).colorScheme.inversePrimary,
@@ -73,15 +75,23 @@ class _CardTaskState extends State<CardTask> {
               const SizedBox(width: 10),
               const Text("Priority:"),
               const SizedBox(width: 6),
-              DropdownMenu(
-                dropdownMenuEntries: priorities,
-                label: Text(
-                  "Priority",
-                  style: TextStyle(
-                    fontSize: 12
+              SizedBox(
+                width: 200,
+                child: DropdownButtonFormField(
+                  value: priority,
+                  items: priorities,
+                  dropdownColor: Theme.of(context).colorScheme.primaryContainer,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)
+                    ),
                   ),
+                  onChanged: (newPriority) {
+                    setState(() {
+                      priority = newPriority;
+                    });
+                  }
                 ),
-
               )
             ],
           ),
