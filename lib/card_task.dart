@@ -23,15 +23,19 @@ class _CardTaskState extends State<CardTask> {
   Widget build(BuildContext context) {
     PriorityManager priorityManager = PriorityManager();
 
-    List<DropdownMenuItem> priorities = [
-      for (Priority priority in priorityManager.getPriorities())
-        DropdownMenuItem(
-          value: priority.name,
-          child: Text(priority.name),
+    String priority = priorityManager.getPriorities()[0].toString();
+
+    List<MenuItemButton> priorities = [
+      for (Priority currentPriority in priorityManager.getPriorities())
+        MenuItemButton(
+          child: Text(currentPriority.toString()),
+          onPressed: () => setState(() {
+            priority = currentPriority.toString();
+          }),
         )
     ];
 
-    String priority = priorityManager.getPriorities()[0].toString();
+    final FocusNode buttonFocusNode = FocusNode(debugLabel: 'Menu Button');
 
     return Card.filled(
       color: Theme.of(context).colorScheme.inversePrimary,
@@ -65,33 +69,32 @@ class _CardTaskState extends State<CardTask> {
             children: [
               const SizedBox(width: 10),
               const Text("Due Date:"),
-              // SizedBox(width: 4),
               TextButton.icon(
                 onPressed: () {
                   throw ErrorDescription("Not yet implemented");
                 },
-                label: Text("Choose Date")
+                label: Text("Choose Date"),
+                icon: Icon(Icons.calendar_month_outlined),
               ),
               const SizedBox(width: 10),
               const Text("Priority:"),
               const SizedBox(width: 6),
-              SizedBox(
-                width: 200,
-                child: DropdownButtonFormField(
-                  value: priority,
-                  items: priorities,
-                  dropdownColor: Theme.of(context).colorScheme.primaryContainer,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12)
-                    ),
-                  ),
-                  onChanged: (newPriority) {
-                    setState(() {
-                      priority = newPriority;
-                    });
-                  }
-                ),
+              MenuAnchor(
+                childFocusNode: buttonFocusNode,
+                menuChildren: priorities,
+                builder: (BuildContext context, MenuController controller, Widget? child) {
+                  return TextButton(
+                    focusNode: buttonFocusNode,
+                    onPressed: () {
+                      if (controller.isOpen) {
+                        controller.close();
+                      } else {
+                        controller.open();
+                      }
+                    },
+                    child: Text(priority),
+                  );
+                },
               )
             ],
           ),
