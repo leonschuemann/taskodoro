@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Expanded(
                         child: ListView(
                           scrollDirection: Axis.vertical,
-                          children: [for (var task in tasks) CardTask(task)],
+                          children: [for (var task in tasks) CardTask(task, priority: "")], // TODO
                         )
                       ),
                     ],

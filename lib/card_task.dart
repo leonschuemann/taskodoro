@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 
 class CardTask extends StatefulWidget {
   final Task task;
-  const CardTask(this.task, {super.key});
+  final String priority;
+  const CardTask(this.task, {super.key, required this.priority});
 
   @override
   State<StatefulWidget> createState() => _CardTaskState();
@@ -12,18 +13,18 @@ class CardTask extends StatefulWidget {
 
 class _CardTaskState extends State<CardTask> {
   late Task task;
+  late String priority;
 
   @override
   void initState() {
     super.initState();
     task = widget.task;
+    priority = widget.priority;
   }
 
   @override
   Widget build(BuildContext context) {
     PriorityManager priorityManager = PriorityManager();
-
-    String priority = priorityManager.getPriorities()[0].toString();
 
     List<MenuItemButton> priorities = [
       for (Priority currentPriority in priorityManager.getPriorities())
