@@ -3,14 +3,22 @@ import 'package:taskodoro/task.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  final List<Task> tasks = [];
+
+  MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<Task> tasks = [];
+  late List<Task> tasks;
+
+  @override
+  void initState() {
+    super.initState();
+    tasks = widget.tasks;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +43,11 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               autofocus: true, // TODO: Use FocusNode to auto-focus when typing
               onSubmitted: (str) {
-                throw ErrorDescription("Not yet implemented");
+                int id = tasks.isNotEmpty ? tasks[tasks.length - 1].id : 0;
+
+                setState(() {
+                  tasks.add(Task(id, str, false, DateTime.now()));
+                });
               },
             ),
           ),
