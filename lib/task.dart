@@ -1,3 +1,5 @@
+import 'package:taskodoro/priority.dart';
+
 class Task {
   final int id;
   late String name;
@@ -5,7 +7,7 @@ class Task {
   late DateTime timeAdded;
   DateTime? timeStart;
   DateTime? timeDue;
-  int? priorityId;
+  Priority priority = PriorityManager().getDefaultPriority();
   String? description;
 
   Task(this.id, this.name, this.isDone, this.timeAdded);

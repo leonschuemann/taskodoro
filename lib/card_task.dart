@@ -30,9 +30,12 @@ class _CardTaskState extends State<CardTask> {
       for (Priority currentPriority in priorityManager.getPriorities())
         MenuItemButton(
           child: Text(currentPriority.toString()),
-          onPressed: () => setState(() {
-            priority = currentPriority.toString();
-          }),
+          onPressed: () => {
+            setState(() {
+              priority = currentPriority.toString();
+              task.priority = currentPriority;
+            })
+          },
         )
     ];
 
@@ -84,16 +87,19 @@ class _CardTaskState extends State<CardTask> {
                 childFocusNode: buttonFocusNode,
                 menuChildren: priorities,
                 builder: (BuildContext context, MenuController controller, Widget? child) {
-                  return TextButton(
-                    focusNode: buttonFocusNode,
-                    onPressed: () {
-                      if (controller.isOpen) {
-                        controller.close();
-                      } else {
-                        controller.open();
-                      }
-                    },
-                    child: Text(priority),
+                  return SizedBox(
+                    width: 150,
+                    child: OutlinedButton(
+                      focusNode: buttonFocusNode,
+                      onPressed: () {
+                        if (controller.isOpen) {
+                          controller.close();
+                        } else {
+                          controller.open();
+                        }
+                      },
+                      child: Text(priority),
+                    ),
                   );
                 },
               )
