@@ -1,6 +1,7 @@
 import 'package:taskodoro/priority.dart';
 import 'package:taskodoro/task.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CardTask extends StatefulWidget {
   final Task task;
@@ -40,6 +41,7 @@ class _CardTaskState extends State<CardTask> {
     ];
 
     final FocusNode buttonFocusNode = FocusNode(debugLabel: 'Menu Button');
+    final localizations = AppLocalizations.of(context);
 
     return Card.filled(
       color: Theme.of(context).colorScheme.inversePrimary,
@@ -65,23 +67,23 @@ class _CardTaskState extends State<CardTask> {
                 onPressed: () {
                   throw ErrorDescription("Not yet implemented");
                 },
-                label: Text('Delete'),
+                label: Text(localizations!.taskDelete),
                 icon: Icon(Icons.delete)),
             ],
           ),
           Row(
             children: [
               const SizedBox(width: 10),
-              const Text("Due Date:"),
+              Text('${localizations.dueDate}:'),
               TextButton.icon(
                 onPressed: () {
                   throw ErrorDescription("Not yet implemented");
                 },
-                label: Text("Choose Date"),
+                label: Text(localizations.chooseDate),
                 icon: Icon(Icons.calendar_month_outlined),
               ),
               const SizedBox(width: 10),
-              const Text("Priority:"),
+              Text('${localizations.priority}:'),
               const SizedBox(width: 6),
               MenuAnchor(
                 childFocusNode: buttonFocusNode,

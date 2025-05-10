@@ -1,0 +1,8 @@
+{
+  "enterNewTask": "Neue Aufgabe eingeben",
+  "noDueDate": "Kein Fälligkeitsdatum",
+  "dueDate": "Fälligkeitsdatum",
+  "chooseDate": "Datum auswählen",
+  "priority": "Priorität",
+  "taskDelete": "Löschen"
+}

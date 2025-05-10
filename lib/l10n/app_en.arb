@@ -1,0 +1,8 @@
+{
+  "enterNewTask": "Enter a new task",
+  "noDueDate": "No due date",
+  "dueDate": "Due Date",
+  "chooseDate": "Choose Date",
+  "priority": "Priority",
+  "taskDelete": "Delete"
+}
