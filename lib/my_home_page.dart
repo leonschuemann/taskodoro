@@ -23,14 +23,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context);
+    final AppLocalizations? localizations = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         leading: IconButton(
           onPressed: () {
-            throw ErrorDescription("Not yet implemented");
+            throw ErrorDescription('Not yet implemented');
           },
           icon: Icon(Icons.menu),
           alignment: Alignment.centerLeft,
@@ -57,7 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Spacer(),
           IconButton(
             onPressed: () {
-              throw ErrorDescription("Not yet implemented");
+              throw ErrorDescription('Not yet implemented');
             },
             icon: Icon(Icons.timer),
             alignment: Alignment.centerLeft,

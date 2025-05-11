@@ -1,9 +1,9 @@
 class PriorityManager {
   final List<Priority> _priorities = [
-    Priority(0, "Choose Priority"),
-    Priority(1, "Low"),
-    Priority(2, "Medium"),
-    Priority(3, "High"),
+    Priority(0, 'Choose Priority'),
+    Priority(1, 'Low'),
+    Priority(2, 'Medium'),
+    Priority(3, 'High'),
   ];
 
   List<Priority> getPriorities() {

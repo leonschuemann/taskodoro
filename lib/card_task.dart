@@ -41,7 +41,7 @@ class _CardTaskState extends State<CardTask> {
     ];
 
     final FocusNode buttonFocusNode = FocusNode(debugLabel: 'Menu Button');
-    final localizations = AppLocalizations.of(context);
+    final AppLocalizations? localizations = AppLocalizations.of(context);
 
     return Card.filled(
       color: Theme.of(context).colorScheme.inversePrimary,
@@ -65,7 +65,7 @@ class _CardTaskState extends State<CardTask> {
               const Spacer(),
               TextButton.icon(
                 onPressed: () {
-                  throw ErrorDescription("Not yet implemented");
+                  throw ErrorDescription('Not yet implemented');
                 },
                 label: Text(localizations!.taskDelete),
                 icon: Icon(Icons.delete)),
@@ -77,7 +77,7 @@ class _CardTaskState extends State<CardTask> {
               Text('${localizations.dueDate}:'),
               TextButton.icon(
                 onPressed: () {
-                  throw ErrorDescription("Not yet implemented");
+                  throw ErrorDescription('Not yet implemented');
                 },
                 label: Text(localizations.chooseDate),
                 icon: Icon(Icons.calendar_month_outlined),
@@ -110,7 +110,7 @@ class _CardTaskState extends State<CardTask> {
           task.description != null ? Row(
             children: [
               const SizedBox(width: 10),
-              Text(task.description ?? ""),
+              Text(task.description ?? ''),
             ],
           ) : SizedBox(),
           SizedBox(height: 8)
