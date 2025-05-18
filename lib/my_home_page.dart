@@ -1,4 +1,5 @@
 import 'package:taskodoro/card_task.dart';
+import 'package:taskodoro/database_service.dart';
 import 'package:taskodoro/task.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -13,12 +14,24 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late List<Task> tasks;
+  final DatabaseService _databaseService = DatabaseService();
+  late List<Task> tasks = [];
+  bool hasLoaded = false;
 
   @override
   void initState() {
     super.initState();
-    tasks = widget.tasks;
+    _loadTasks();
+  }
+
+  Future<void> _loadTasks() async {
+    final loadedTasks = await _databaseService.getTasks();
+
+    setState(() {
+      tasks = loadedTasks;
+    });
+
+    hasLoaded = true;
   }
 
   @override
@@ -46,10 +59,10 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               autofocus: true, // TODO: Use FocusNode to auto-focus when typing
               onSubmitted: (str) {
-                int id = tasks.isNotEmpty ? tasks[tasks.length - 1].id : 0;
-
                 setState(() {
-                  tasks.add(Task(id, str, false, DateTime.now()));
+                  Task task = Task(id: null, name: str, isDone: false, timeAdded: DateTime.now());
+                  _databaseService.insertTask(task);
+                  _loadTasks();
                 });
               },
             ),
@@ -86,10 +99,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         ],
                       ),
                       Expanded(
-                        child: ListView(
-                          scrollDirection: Axis.vertical,
-                          children: [for (var task in tasks) CardTask(task, priority: task.priority.toString())], // TODO
-                        )
+                        child: tasks.isEmpty && !hasLoaded
+                            ? const Center(child: CircularProgressIndicator())
+                            : ListView(
+                              scrollDirection: Axis.vertical,
+                              children: [for (var task in tasks) CardTask(task, priority: task.priority.toString())],
+                            )
                       ),
                     ],
                   ),

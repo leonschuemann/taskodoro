@@ -1,3 +1,4 @@
+import 'package:taskodoro/database_service.dart';
 import 'package:taskodoro/priority.dart';
 import 'package:taskodoro/task.dart';
 import 'package:flutter/material.dart';
@@ -16,11 +17,17 @@ class _CardTaskState extends State<CardTask> {
   late Task task;
   late String priority;
 
+  DatabaseService databaseService = DatabaseService();
+
   @override
   void initState() {
     super.initState();
     task = widget.task;
     priority = widget.priority;
+  }
+
+  Future<void> _updateTask(Task task) async {
+    await databaseService.updateTask(task);
   }
 
   @override
@@ -35,6 +42,7 @@ class _CardTaskState extends State<CardTask> {
             setState(() {
               priority = currentPriority.toString();
               task.priority = currentPriority;
+              _updateTask(task);
             })
           },
         )
@@ -57,6 +65,7 @@ class _CardTaskState extends State<CardTask> {
                 onChanged: (value) {
                   setState(() {
                     task.isDone = value!;
+                    _updateTask(task);
                   });
                 }
               ),
