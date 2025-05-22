@@ -7,24 +7,15 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class CardTask extends StatefulWidget {
   final Task task;
   final String priority;
-  const CardTask(this.task, {super.key, required this.priority});
+  final VoidCallback deleteTask;
+  const CardTask(this.task, {super.key, required this.priority, required this.deleteTask});
 
   @override
   State<StatefulWidget> createState() => _CardTaskState();
 }
 
 class _CardTaskState extends State<CardTask> {
-  late Task task;
-  late String priority;
-
   DatabaseService databaseService = DatabaseService();
-
-  @override
-  void initState() {
-    super.initState();
-    task = widget.task;
-    priority = widget.priority;
-  }
 
   Future<void> _updateTask(Task task) async {
     await databaseService.updateTask(task);
@@ -32,6 +23,10 @@ class _CardTaskState extends State<CardTask> {
 
   @override
   Widget build(BuildContext context) {
+    final Task task = widget.task;
+    final VoidCallback deleteTask = widget.deleteTask;
+    String priority = widget.priority;
+
     PriorityManager priorityManager = PriorityManager();
 
     List<MenuItemButton> priorities = [
@@ -73,8 +68,8 @@ class _CardTaskState extends State<CardTask> {
               Text(task.name),
               const Spacer(),
               TextButton.icon(
-                onPressed: () {
-                  throw ErrorDescription('Not yet implemented');
+                onPressed: () => {
+                  deleteTask()
                 },
                 label: Text(localizations!.taskDelete),
                 icon: Icon(Icons.delete)),

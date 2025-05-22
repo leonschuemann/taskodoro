@@ -128,6 +128,16 @@ class DatabaseService {
     );
   }
 
+  Future<void> deleteTask(int id) async {
+    final db = await _databaseService.database;
+
+    await db.delete(
+      'tasks',
+      where: "id = ?",
+      whereArgs: [id]
+    );
+  }
+
   Future<List<Priority>> getPriorities() async {
     final db = await _databaseService.database;
     final List<Map<String, dynamic>> priorities = await db.query('priorities');

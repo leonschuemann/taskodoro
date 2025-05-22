@@ -34,6 +34,11 @@ class _MyHomePageState extends State<MyHomePage> {
     hasLoaded = true;
   }
 
+  Future<void> deleteTask(int id) async {
+    await _databaseService.deleteTask(id);
+    await _loadTasks();
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppLocalizations? localizations = AppLocalizations.of(context);
@@ -103,7 +108,14 @@ class _MyHomePageState extends State<MyHomePage> {
                             ? const Center(child: CircularProgressIndicator())
                             : ListView(
                               scrollDirection: Axis.vertical,
-                              children: [for (var task in tasks) CardTask(task, priority: task.priority.toString())],
+                              children: tasks.map((task) {
+                                return CardTask(
+                                  key: ValueKey(task.id),
+                                  task,
+                                  priority: task.priority.toString(),
+                                  deleteTask: () => deleteTask(task.id!),
+                                );
+                              }).toList(),
                             )
                       ),
                     ],
