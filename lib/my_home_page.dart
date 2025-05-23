@@ -15,6 +15,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final DatabaseService _databaseService = DatabaseService();
+  final TextEditingController _newTaskController = TextEditingController();
   late List<Task> tasks = [];
   bool hasLoaded = false;
 
@@ -37,6 +38,12 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> deleteTask(int id) async {
     await _databaseService.deleteTask(id);
     await _loadTasks();
+  }
+
+  @override
+  void dispose() {
+    _newTaskController.dispose();
+    super.dispose();
   }
 
   @override
@@ -63,11 +70,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   hintText: localizations!.enterNewTask
               ),
               autofocus: true, // TODO: Use FocusNode to auto-focus when typing
+              controller: _newTaskController,
               onSubmitted: (str) {
+                if (str.isEmpty) {
+                  return;
+                }
+
                 setState(() {
                   Task task = Task(id: null, name: str, isDone: false, timeAdded: DateTime.now());
                   _databaseService.insertTask(task);
                   _loadTasks();
+                  _newTaskController.clear();
                 });
               },
             ),
