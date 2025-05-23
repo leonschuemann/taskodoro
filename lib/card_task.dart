@@ -16,6 +16,17 @@ class CardTask extends StatefulWidget {
 
 class _CardTaskState extends State<CardTask> {
   DatabaseService databaseService = DatabaseService();
+  late Task task;
+  late String priority;
+  late VoidCallback deleteTask;
+
+  @override
+  void initState() {
+    super.initState();
+    task = widget.task;
+    priority = widget.priority;
+    deleteTask = widget.deleteTask;
+  }
 
   Future<void> _updateTask(Task task) async {
     await databaseService.updateTask(task);
@@ -23,10 +34,6 @@ class _CardTaskState extends State<CardTask> {
 
   @override
   Widget build(BuildContext context) {
-    final Task task = widget.task;
-    final VoidCallback deleteTask = widget.deleteTask;
-    String priority = widget.priority;
-
     PriorityManager priorityManager = PriorityManager();
 
     List<MenuItemButton> priorities = [
