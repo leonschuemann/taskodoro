@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:taskodoro/card_task.dart';
-import 'package:taskodoro/database_service.dart';
-import 'package:taskodoro/task.dart';
+import 'package:taskodoro/models/task.dart';
+import 'package:taskodoro/utils/database_service.dart';
+import 'package:taskodoro/widgets/card_task.dart';
 
 class MyHomePage extends StatefulWidget {
   final List<Task> tasks = <Task>[];

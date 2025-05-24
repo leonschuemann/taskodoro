@@ -1,4 +1,5 @@
-import 'package:taskodoro/priority.dart';
+import 'package:taskodoro/models/priority.dart';
+import 'package:taskodoro/utils/priority_manager.dart';
 
 class Task {
   final int? id;
@@ -7,7 +8,7 @@ class Task {
   late DateTime timeAdded;
   DateTime? timeStart;
   DateTime? timeDue;
-  Priority priority = PriorityManager().getDefaultPriority();
+  Priority priority = PriorityService().getDefaultPriority();
   String? description;
 
   Task({
@@ -38,7 +39,7 @@ class Task {
       timeAdded: DateTime.parse(map['timeAdded'] as String),
     );
 
-    final PriorityManager priorityManager = PriorityManager();
+    final PriorityService priorityManager = PriorityService();
 
     task.timeStart = map['timeStart'] != null ? DateTime.parse(map['timeStart'] as String) : null;
     task.timeDue = map['timeDue'] != null ? DateTime.parse(map['timeDue'] as String) : null;

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:taskodoro/database_service.dart';
-import 'package:taskodoro/priority.dart';
-import 'package:taskodoro/task.dart';
+import 'package:taskodoro/models/priority.dart';
+import 'package:taskodoro/models/task.dart';
+import 'package:taskodoro/utils/database_service.dart';
+import 'package:taskodoro/utils/priority_manager.dart';
 
 class CardTask extends StatefulWidget {
   const CardTask(this.task, {required this.priority, required this.deleteTask, super.key});
@@ -34,7 +35,7 @@ class _CardTaskState extends State<CardTask> {
 
   @override
   Widget build(BuildContext context) {
-    final PriorityManager priorityManager = PriorityManager();
+    final PriorityService priorityManager = PriorityService();
 
     final List<MenuItemButton> priorities = <MenuItemButton>[
       for (final Priority currentPriority in priorityManager.getPriorities())

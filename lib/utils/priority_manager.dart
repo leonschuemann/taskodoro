@@ -1,9 +1,10 @@
-import 'package:taskodoro/database_service.dart';
+import 'package:taskodoro/models/priority.dart';
+import 'package:taskodoro/utils/database_service.dart';
 
-class PriorityManager {
-  static final PriorityManager _instance = PriorityManager._internal();
-  factory PriorityManager() => _instance;
-  PriorityManager._internal();
+class PriorityService {
+  static final PriorityService _instance = PriorityService._internal();
+  factory PriorityService() => _instance;
+  PriorityService._internal();
 
   final DatabaseService _databaseService = DatabaseService();
 
@@ -14,10 +15,10 @@ class PriorityManager {
   ];
   List<Priority> _priorities = <Priority>[];
   final Priority choosePriority = Priority(
-      id: 0,
-      level: 0,
-      name: 'Choose Priority',
-      isCreatedByUser: false,
+    id: 0,
+    level: 0,
+    name: 'Choose Priority',
+    isCreatedByUser: false,
   );
 
   Future<void> loadPriorities() async {
@@ -28,7 +29,7 @@ class PriorityManager {
 
   List<Priority> getPriorities() {
     _priorities.sort((Priority a, Priority b) => a.level.compareTo(b.level));
-    
+
     return _priorities;
   }
 
@@ -56,42 +57,5 @@ class PriorityManager {
 
   void addPriority(Priority priority) {
     // TODO
-  }
-}
-
-class Priority {
-  int id;
-  int level;
-  String name;
-  bool isCreatedByUser;
-
-  Priority({
-    required this.id,
-    required this.level,
-    required this.name,
-    required this.isCreatedByUser,
-  });
-
-  factory Priority.fromDatabaseMap(Map<String, dynamic> map) {
-    return Priority(
-      id: map['id'] as int,
-      level: map['level'] as int,
-      name: map['name'] as String,
-      isCreatedByUser: !(map['isCreatedByUser'] == 0),
-    );
-  }
-
-  @override
-  String toString() {
-    return name;
-  }
-
-  Map<String, dynamic> toDatabaseMap() {
-    return <String, dynamic>{
-      'id': id,
-      'level': level,
-      'name': name,
-      'isCreatedByUser': isCreatedByUser ? 1 : 0,
-    };
   }
 }
