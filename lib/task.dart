@@ -14,11 +14,11 @@ class Task {
     required this.id,
     required this.name,
     required this.isDone,
-    required this.timeAdded
+    required this.timeAdded,
   });
 
   Map<String, dynamic> toDatabaseMap() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'name': name,
       'isDone': isDone ? 1 : 0,
@@ -31,21 +31,21 @@ class Task {
   }
 
   factory Task.fromDatabaseMap(Map<String, dynamic> map) {
-    Task task = Task(
-      id: map['id']?.toInt() ?? 0,
-      name: map['name'] ?? '',
-      isDone: map['isDone'] == 0 ? false : true,
-      timeAdded: DateTime.parse(map['timeAdded']),
+    final Task task = Task(
+      id: map['id'] as int? ?? 0,
+      name: map['name'] as String? ?? '',
+      isDone: !(map['isDone'] == 0),
+      timeAdded: DateTime.parse(map['timeAdded'] as String),
     );
 
-    PriorityManager priorityManager = PriorityManager();
+    final PriorityManager priorityManager = PriorityManager();
 
-    task.timeStart = map['timeStart'] != null ? DateTime.parse(map['timeStart']) : null;
-    task.timeDue = map['timeDue'] != null ? DateTime.parse(map['timeDue']) : null;
+    task.timeStart = map['timeStart'] != null ? DateTime.parse(map['timeStart'] as String) : null;
+    task.timeDue = map['timeDue'] != null ? DateTime.parse(map['timeDue'] as String) : null;
     task.priority = map['priority'] != 0 && map['priority'] != null
-        ? priorityManager.getPriority(map["priority"]) ?? priorityManager.getDefaultPriority()
+        ? priorityManager.getPriority(map['priority'] as int) ?? priorityManager.getDefaultPriority()
         : priorityManager.getDefaultPriority();
-    task.description = map['description'];
+    task.description = map['description'] as String?;
 
     return task;
   }

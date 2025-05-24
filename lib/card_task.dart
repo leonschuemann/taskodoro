@@ -1,14 +1,14 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:taskodoro/database_service.dart';
 import 'package:taskodoro/priority.dart';
 import 'package:taskodoro/task.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CardTask extends StatefulWidget {
+  const CardTask(this.task, {required this.priority, required this.deleteTask, super.key});
   final Task task;
   final String priority;
   final VoidCallback deleteTask;
-  const CardTask(this.task, {super.key, required this.priority, required this.deleteTask});
 
   @override
   State<StatefulWidget> createState() => _CardTaskState();
@@ -34,20 +34,20 @@ class _CardTaskState extends State<CardTask> {
 
   @override
   Widget build(BuildContext context) {
-    PriorityManager priorityManager = PriorityManager();
+    final PriorityManager priorityManager = PriorityManager();
 
-    List<MenuItemButton> priorities = [
-      for (Priority currentPriority in priorityManager.getPriorities())
+    final List<MenuItemButton> priorities = <MenuItemButton>[
+      for (final Priority currentPriority in priorityManager.getPriorities())
         MenuItemButton(
           child: Text(currentPriority.toString()),
-          onPressed: () => {
+          onPressed: () => <void>{
             setState(() {
               priority = currentPriority.toString();
               task.priority = currentPriority;
               _updateTask(task);
-            })
+            }),
           },
-        )
+        ),
     ];
 
     final FocusNode buttonFocusNode = FocusNode(debugLabel: 'Menu Button');
@@ -57,41 +57,42 @@ class _CardTaskState extends State<CardTask> {
       color: Theme.of(context).colorScheme.inversePrimary,
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(height: 6),
+        children: <Widget>[
+          const SizedBox(height: 6),
           Row(
-            children: [
+            children: <Widget>[
               const SizedBox(width: 6),
               Checkbox(
                 value: task.isDone,
-                onChanged: (value) {
+                onChanged: (bool? value) {
                   setState(() {
                     task.isDone = value!;
                     _updateTask(task);
                   });
-                }
+                },
               ),
               const SizedBox(width: 6),
               Text(task.name),
               const Spacer(),
               TextButton.icon(
-                onPressed: () => {
-                  deleteTask()
+                onPressed: () => <void>{
+                  deleteTask(),
                 },
                 label: Text(localizations!.taskDelete),
-                icon: Icon(Icons.delete)),
+                icon: const Icon(Icons.delete),
+              ),
             ],
           ),
           Row(
-            children: [
+            children: <Widget>[
               const SizedBox(width: 10),
               Text('${localizations.dueDate}:'),
               TextButton.icon(
                 onPressed: () {
-                  throw ErrorDescription('Not yet implemented');
+                  throw ArgumentError('Not yet implemented');
                 },
                 label: Text(localizations.chooseDate),
-                icon: Icon(Icons.calendar_month_outlined),
+                icon: const Icon(Icons.calendar_month_outlined),
               ),
               const SizedBox(width: 10),
               Text('${localizations.priority}:'),
@@ -115,16 +116,16 @@ class _CardTaskState extends State<CardTask> {
                     ),
                   );
                 },
-              )
+              ),
             ],
           ),
-          task.description != null ? Row(
-            children: [
+          if (task.description != null) Row(
+            children: <Widget>[
               const SizedBox(width: 10),
               Text(task.description ?? ''),
             ],
-          ) : SizedBox(),
-          SizedBox(height: 8)
+          ) else const SizedBox(),
+          const SizedBox(height: 8),
         ],
       ),
     );

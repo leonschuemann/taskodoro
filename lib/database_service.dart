@@ -23,21 +23,21 @@ class DatabaseService {
   }
 
   Future<Database> _initDatabase() async {
-    final databasePath = await getDatabasePath();
-    final path = join(databasePath.path, 'taskodoro.db');
+    final Directory databasePath = await getDatabasePath();
+    final String path = join(databasePath.path, 'taskodoro.db');
 
     if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
       sqfliteFfiInit();
 
-      return await databaseFactoryFfi.openDatabase(
+      return databaseFactoryFfi.openDatabase(
         path,
         options: OpenDatabaseOptions(
           version: 1,
           onCreate: _onCreate,
-        )
+        ),
       );
     } else {
-      return await openDatabase(
+      return openDatabase(
         path,
         onCreate: _onCreate,
         version: 1,
@@ -46,7 +46,7 @@ class DatabaseService {
   }
 
   Future<Directory> getDatabasePath() {
-    String platform = Platform.operatingSystem;
+    final String platform = Platform.operatingSystem;
 
     switch (platform) {
       case 'android':
@@ -65,89 +65,89 @@ class DatabaseService {
   }
 
   Future<void> _onCreate(Database db, int version) async {
-    List<Map<String, Object?>> priorities = await db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='priorities'");
+    final List<Map<String, Object?>> priorities = await db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='priorities'");
 
-    await db.execute('CREATE TABLE IF NOT EXISTS priorities('
-        'id INTEGER PRIMARY KEY,'
-        'level INTEGER,'
-        'name TEXT,'
-        'isCreatedByUser INTEGER'
+    await db.execute('CREATE TABLE IF NOT EXISTS priorities( '
+        'id INTEGER PRIMARY KEY, '
+        'level INTEGER, '
+        'name TEXT, '
+        'isCreatedByUser INTEGER '
         ')'
     );
 
-    await db.execute('CREATE TABLE IF NOT EXISTS tasks('
-        'id INTEGER PRIMARY KEY,'
-        'name TEXT,'
-        'isDone INTEGER,'
-        'timeAdded TEXT,'
-        'timeStart TEXT,'
-        'timeDue TEXT,'
-        'priority INTEGER,'
-        'description TEXT,'
-        'FOREIGN KEY (priority) REFERENCES priorities (id) ON DELETE SET NULL'
+    await db.execute('CREATE TABLE IF NOT EXISTS tasks( '
+        'id INTEGER PRIMARY KEY, '
+        'name TEXT, '
+        'isDone INTEGER, '
+        'timeAdded TEXT, '
+        'timeStart TEXT, '
+        'timeDue TEXT, '
+        'priority INTEGER, '
+        'description TEXT, '
+        'FOREIGN KEY (priority) REFERENCES priorities (id) ON DELETE SET NULL '
         ')'
     );
 
     if (priorities.isEmpty) {
-      PriorityManager priorityManager = PriorityManager();
-      List<Priority> defaultPriorities = priorityManager.getDefaultPriorities();
+      final PriorityManager priorityManager = PriorityManager();
+      final List<Priority> defaultPriorities = priorityManager.getDefaultPriorities();
 
-      for (Priority priority in defaultPriorities) {
-        insertPriority(priority);
+      for (final Priority priority in defaultPriorities) {
+        await insertPriority(priority);
       }
     }
   }
 
   Future<List<Task>> getTasks() async {
-    final db = await _databaseService.database;
+    final Database db = await _databaseService.database;
     final List<Map<String, dynamic>> tasks = await db.query('tasks');
 
-    PriorityManager priorityManager = PriorityManager();
+    final PriorityManager priorityManager = PriorityManager();
     await priorityManager.loadPriorities();
 
-    return List.generate(tasks.length, (index) => Task.fromDatabaseMap(tasks[index]));
+    return List<Task>.generate(tasks.length, (int index) => Task.fromDatabaseMap(tasks[index]));
   }
 
   Future<void> insertTask(Task task) async {
-    final db = await _databaseService.database;
+    final Database db = await _databaseService.database;
 
-    Map<String, dynamic> taskMap = task.toDatabaseMap();
+    final Map<String, dynamic> taskMap = task.toDatabaseMap();
     taskMap['id'] = null;
 
     await db.insert('tasks', taskMap);
   }
 
   Future<void> updateTask(Task task) async {
-    final db = await _databaseService.database;
+    final Database db = await _databaseService.database;
 
     await db.update(
       'tasks',
       task.toDatabaseMap(),
       where: 'id = ?',
-      whereArgs: [task.id]
+      whereArgs: <int>[task.id!],
     );
   }
 
   Future<void> deleteTask(int id) async {
-    final db = await _databaseService.database;
+    final Database db = await _databaseService.database;
 
     await db.delete(
       'tasks',
-      where: "id = ?",
-      whereArgs: [id]
+      where: 'id = ?',
+      whereArgs: <int>[id],
     );
   }
 
   Future<List<Priority>> getPriorities() async {
-    final db = await _databaseService.database;
+    final Database db = await _databaseService.database;
     final List<Map<String, dynamic>> priorities = await db.query('priorities');
 
-    return List.generate(priorities.length, (index) => Priority.fromDatabaseMap(priorities[index]));
+    return List<Priority>.generate(priorities.length, (int index) => Priority.fromDatabaseMap(priorities[index]));
   }
 
   Future<void> insertPriority(Priority priority) async {
-    final db = await _databaseService.database;
-    final priorityMap = priority.toDatabaseMap();
+    final Database db = await _databaseService.database;
+    final Map<String, dynamic> priorityMap = priority.toDatabaseMap();
     priorityMap['id'] = null;
 
     await db.insert('priorities', priority.toDatabaseMap());

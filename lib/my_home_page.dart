@@ -1,11 +1,11 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:taskodoro/card_task.dart';
 import 'package:taskodoro/database_service.dart';
 import 'package:taskodoro/task.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MyHomePage extends StatefulWidget {
-  final List<Task> tasks = [];
+  final List<Task> tasks = <Task>[];
 
   MyHomePage({super.key});
 
@@ -16,7 +16,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final DatabaseService _databaseService = DatabaseService();
   final TextEditingController _newTaskController = TextEditingController();
-  late List<Task> tasks = [];
+  late List<Task> tasks = <Task>[];
   bool hasLoaded = false;
 
   @override
@@ -26,7 +26,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _loadTasks() async {
-    final loadedTasks = await _databaseService.getTasks();
+    final List<Task> loadedTasks = await _databaseService.getTasks();
 
     setState(() {
       tasks = loadedTasks;
@@ -55,29 +55,29 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         leading: IconButton(
           onPressed: () {
-            throw ErrorDescription('Not yet implemented');
+            throw ArgumentError('Not yet implemented');
           },
-          icon: Icon(Icons.menu),
+          icon: const Icon(Icons.menu),
           alignment: Alignment.centerLeft,
         ),
-        actions: [
-          Spacer(),
+        actions: <Widget>[
+          const Spacer(),
           SizedBox(
             width: 600,
             child: TextField(
               decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: localizations!.enterNewTask
+                  border: const OutlineInputBorder(),
+                  hintText: localizations!.enterNewTask,
               ),
               autofocus: true, // TODO: Use FocusNode to auto-focus when typing
               controller: _newTaskController,
-              onSubmitted: (str) {
+              onSubmitted: (String str) {
                 if (str.isEmpty) {
                   return;
                 }
 
                 setState(() {
-                  Task task = Task(id: null, name: str, isDone: false, timeAdded: DateTime.now());
+                  final Task task = Task(id: null, name: str, isDone: false, timeAdded: DateTime.now());
                   _databaseService.insertTask(task);
                   _loadTasks();
                   _newTaskController.clear();
@@ -85,30 +85,29 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
           ),
-          Spacer(),
+          const Spacer(),
           IconButton(
             onPressed: () {
-              throw ErrorDescription('Not yet implemented');
+              throw ArgumentError('Not yet implemented');
             },
-            icon: Icon(Icons.timer),
+            icon: const Icon(Icons.timer),
             alignment: Alignment.centerLeft,
           ),
         ],
       ),
       body: Column(
-        children: [
+        children: <Widget>[
           Expanded(
             child: Center(
               child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: 1200, minWidth: 400),
+                constraints: const BoxConstraints(maxWidth: 1200, minWidth: 400),
                 child: FractionallySizedBox(
                   widthFactor: 0.7,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 6),
+                    children: <Widget>[
+                      const SizedBox(height: 6),
                       Row(
-                        children: [
+                        children: <Widget>[
                           const Expanded(child: Divider()),
                           const SizedBox(width: 8),
                           Text(localizations.noDueDate),
@@ -120,21 +119,20 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: tasks.isEmpty && !hasLoaded
                             ? const Center(child: CircularProgressIndicator())
                             : ListView(
-                              scrollDirection: Axis.vertical,
-                              children: tasks.map((task) {
+                              children: tasks.map((Task task) {
                                 return CardTask(
-                                  key: ValueKey(task.id),
+                                  key: ValueKey<int>(task.id!),
                                   task,
                                   priority: task.priority.toString(),
                                   deleteTask: () => deleteTask(task.id!),
                                 );
                               }).toList(),
-                            )
+                            ),
                       ),
                     ],
                   ),
                 ),
-              )
+              ),
             ),
           ),
         ],
