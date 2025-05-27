@@ -53,6 +53,10 @@ class _CardTaskState extends State<CardTask> {
 
     final FocusNode buttonFocusNode = FocusNode(debugLabel: 'Menu Button');
     final AppLocalizations? localizations = AppLocalizations.of(context);
+    final TextEditingController taskNameController = TextEditingController();
+    final TextEditingController taskDescriptionController = TextEditingController();
+    taskNameController.text = task.name;
+    taskDescriptionController.text = task.description ?? '';
 
     return Card.filled(
       color: Theme.of(context).colorScheme.inversePrimary,
@@ -73,7 +77,24 @@ class _CardTaskState extends State<CardTask> {
                 },
               ),
               const SizedBox(width: 6),
-              Text(task.name),
+              Expanded(
+                child: TextField(
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  controller: taskNameController,
+                  onSubmitted: (String str) {
+                    setState(() {
+                      taskNameController.text = str;
+                      task.name = str;
+
+                      _updateTask(task);
+                    });
+                  },
+                ),
+              ),
               const Spacer(),
               TextButton.icon(
                 onPressed: () => <void>{
@@ -120,10 +141,28 @@ class _CardTaskState extends State<CardTask> {
               ),
             ],
           ),
-          if (task.description != null) Row(
+          Row(
             children: <Widget>[
-              const SizedBox(width: 10),
-              Text(task.description ?? ''),
+              const SizedBox(width: margin),
+              Expanded(
+                child: TextField(
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  controller: taskDescriptionController,
+                  onSubmitted: (String str) {
+                    setState(() {
+                      taskDescriptionController.text = str;
+                      task.description = str;
+
+                      _updateTask(task);
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(width: 8),
             ],
           ) else const SizedBox(),
           const SizedBox(height: 8),

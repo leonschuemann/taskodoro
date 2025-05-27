@@ -4,7 +4,7 @@ Taskodoro is a Flutter-powered to-do application with a built-in Pomodoro timer 
 
 ## Features
 - [ ] **Task Management**
-  - [ ] Create, edit, complete, and delete tasks
+  - [x] Create, edit, complete, and delete tasks
   - [ ] Organize tasks into customizable lists
 
 - [ ] **Integrated Pomodoro Timer**
