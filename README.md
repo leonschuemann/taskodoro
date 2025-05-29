@@ -39,7 +39,12 @@ Taskodoro is a Flutter-powered to-do application with a built-in Pomodoro timer 
    flutter pub get
    ```
 
-4. **Run on Emulator or Device**
+4. **Generate Localization Files**
+   ```bash
+   flutter gen-l10n
+   ```
+
+5. **Run on Emulator or Device**
    ```bash
    flutter run
    ```
