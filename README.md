@@ -21,6 +21,10 @@ Taskodoro is a Flutter-powered to-do application with a built-in Pomodoro timer 
   - [ ] Smooth transitions and animations
   - [ ] Accessibility optimizations
 
+## Roadmap
+
+For a detailed overview of the project's future plans and milestones, please check out the [Trello Roadmap](https://trello.com/b/AERvgjyl/taskodoro-roadmap). This board outlines the upcoming features, enhancements, and timelines.
+
 ## Setup & Running the App
 
 1. **Prerequisites**
