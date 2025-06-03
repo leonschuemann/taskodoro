@@ -94,7 +94,7 @@ class DatabaseService {
       final List<Priority> defaultPriorities = priorityManager.getDefaultPriorities();
 
       for (final Priority priority in defaultPriorities) {
-        await insertPriority(priority);
+        await _insertPriorityWithDb(priority, db);
       }
     }
   }
@@ -148,9 +148,11 @@ class DatabaseService {
 
   Future<void> insertPriority(Priority priority) async {
     final Database db = await _databaseService.database;
-    final Map<String, dynamic> priorityMap = priority.toDatabaseMap();
-    priorityMap['id'] = null;
 
+    _insertPriorityWithDb(priority, db);
+  }
+
+  Future<void> _insertPriorityWithDb(Priority priority, Database db) async {
     await db.insert('priorities', priority.toDatabaseMap());
   }
 }
