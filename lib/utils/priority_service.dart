@@ -52,7 +52,7 @@ class PriorityService {
   }
 
   Priority getDefaultPriority() {
-    return _priorities[0];
+    return choosePriority;
   }
 
   void addPriority(Priority priority) {

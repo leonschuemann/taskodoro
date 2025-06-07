@@ -4,5 +4,7 @@
   "dueDate": "Fälligkeitsdatum",
   "chooseDate": "Datum auswählen",
   "priority": "Priorität",
-  "taskDelete": "Löschen"
+  "taskDelete": "Löschen",
+  "name": "Name",
+  "description": "Beschreibung"
 }

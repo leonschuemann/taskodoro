@@ -4,5 +4,7 @@
   "dueDate": "Due Date",
   "chooseDate": "Choose Date",
   "priority": "Priority",
-  "taskDelete": "Delete"
+  "taskDelete": "Delete",
+  "name": "Name",
+  "description": "Description"
 }
