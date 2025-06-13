@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:taskodoro/l10n/app_localizations.dart';
 import 'package:taskodoro/models/task.dart';
 import 'package:taskodoro/themes/spacing_theme.dart';
 import 'package:taskodoro/utils/database_service.dart';

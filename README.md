@@ -28,7 +28,7 @@ For a detailed overview of the project's future plans and milestones, please che
 ## Setup & Running the App
 
 1. **Prerequisites**
-   - [Flutter SDK ≥ 3.29.0](https://flutter.dev/docs/get-started/install)
+   - [Flutter SDK ≥ 3.32.0](https://flutter.dev/docs/get-started/install)
    - Dart SDK ≥ 3.7.0
    - An IDE or editor of your choice (Android Studio, VS Code, etc.)
 
@@ -43,12 +43,7 @@ For a detailed overview of the project's future plans and milestones, please che
    flutter pub get
    ```
 
-4. **Generate Localization Files**
-   ```bash
-   flutter gen-l10n
-   ```
-
-5. **Run on Emulator or Device**
+4. **Run on Emulator or Device**
    ```bash
    flutter run
    ```
