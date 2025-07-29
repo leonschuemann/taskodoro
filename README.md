@@ -28,22 +28,24 @@ For a detailed overview of the project's future plans and milestones, please che
 ## Setup & Running the App
 
 1. **Prerequisites**
-   - [Flutter SDK ≥ 3.32.0](https://flutter.dev/docs/get-started/install)
-   - Dart SDK ≥ 3.7.0
-   - An IDE or editor of your choice (Android Studio, VS Code, etc.)
+   - [Flutter SDK ≥ 3.32.5](https://flutter.dev/docs/get-started/install)
+   - Dart SDK ≥ 3.8.1
 
-2. **Clone the Repository**  
-   ```bash
-   git clone https://github.com/leonschuemann/taskodoro.git
-   cd taskodoro
-   ```
+2. **Clone the Repository**
+  ```bash
+  git clone https://github.com/leonschuemann/taskodoro.git
+  cd taskodoro
+  ```
 
 3. **Install Dependencies**
-   ```bash
-   flutter pub get
-   ```
+  ```bash
+  flutter pub get
+  ```
 
-4. **Run on Emulator or Device**
+4. **Install Database Dependencies**
+   Depending on your operating system, follow the instruction in the appropriate link to install the necessary database dependencies: [Windows](https://pub.dev/packages/sqflite_common_ffi#windows) [MacOS](https://pub.dev/packages/sqflite_common_ffi#macos) [Linux](https://pub.dev/packages/sqflite_common_ffi#linux)
+
+5. **Run on Emulator or Device**
    ```bash
    flutter run
    ```
