@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:taskodoro/l10n/app_localizations.dart';
-import 'package:taskodoro/screens/my_home_page.dart';
+import 'package:taskodoro/screens/home_page.dart';
 import 'package:taskodoro/themes/text_theme.dart';
 import 'package:taskodoro/themes/theme.dart';
 
