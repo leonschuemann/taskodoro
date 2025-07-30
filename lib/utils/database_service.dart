@@ -26,6 +26,7 @@ class DatabaseService {
   Future<Database> _initDatabase() async {
     final Directory databasePath = await getDatabasePath();
     final String path = join(databasePath.path, 'taskodoro.db');
+    const int version = 2;
 
     if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
       sqfliteFfiInit();
@@ -33,15 +34,19 @@ class DatabaseService {
       return databaseFactoryFfi.openDatabase(
         path,
         options: OpenDatabaseOptions(
-          version: 1,
+          version: version,
           onCreate: _onCreate,
+          onUpgrade: _onUpgrade,
+          onConfigure: _onConfigure,
         ),
       );
     } else {
       return openDatabase(
         path,
+        version: version,
         onCreate: _onCreate,
-        version: 1,
+        onUpgrade: _onUpgrade,
+        onConfigure: _onConfigure,
       );
     }
   }
@@ -66,6 +71,68 @@ class DatabaseService {
   }
 
   Future<void> _onCreate(Database db, int version) async {
+    final List<Map<String, Object?>> priorities = await db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='priorities'");
+
+    await db.execute('CREATE TABLE priorities( '
+        'id INTEGER PRIMARY KEY, '
+        'level INTEGER, '
+        'name TEXT, '
+        'isCreatedByUser INTEGER '
+        ')'
+    );
+
+    await db.execute('CREATE TABLE tasks( '
+        'id INTEGER PRIMARY KEY, '
+        'name TEXT, '
+        'isDone INTEGER, '
+        'timeAdded TEXT, '
+        'timeStart TEXT, '
+        'timeDue TEXT, '
+        'priority INTEGER, '
+        'description TEXT, '
+        'taskListId INTEGER REFERENCES taskLists (id), '
+        'FOREIGN KEY (priority) REFERENCES priorities (id) ON DELETE SET NULL '
+        ')'
+    );
+    
+    await db.execute('CREATE TABLE taskLists( '
+        'id INTEGER PRIMARY KEY, '
+        'name TEXT '
+        ')'
+    );
+
+    if (priorities.isEmpty) {
+      final PriorityService priorityService = PriorityService();
+      final List<Priority> defaultPriorities = priorityService.getDefaultPriorities();
+
+      for (final Priority priority in defaultPriorities) {
+        await _insertPriorityWithDb(priority, db);
+      }
+    }
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    for (int i = oldVersion + 1; i <= newVersion; i++) {
+      await _upgradeDB(db, i);
+    }
+  }
+
+  Future<void> _onConfigure(Database db) async {
+    await db.execute('PRAGMA foreign_keys = ON');
+  }
+
+  Future<void> _upgradeDB(Database db, int version) async {
+    switch (version) {
+      case 1:
+        await _dbUpgrade1(db, version);
+      case 2:
+        await _dbUpgrade2(db, version);
+      default:
+        throw ArgumentError('Invalid database version: $version.');
+    }
+  }
+
+  Future<void> _dbUpgrade1(Database db, int version) async {
     final List<Map<String, Object?>> priorities = await db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='priorities'");
 
     await db.execute('CREATE TABLE IF NOT EXISTS priorities( '
@@ -97,6 +164,16 @@ class DatabaseService {
         await _insertPriorityWithDb(priority, db);
       }
     }
+  }
+
+  Future<void> _dbUpgrade2(Database db, int version) async {
+    await db.execute('CREATE TABLE IF NOT EXISTS taskLists( '
+        'id INTEGER PRIMARY KEY, '
+        'name TEXT '
+        ')'
+    );
+
+    await db.execute('ALTER TABLE tasks ADD COLUMN taskListId INTEGER REFERENCES taskLists (id)');
   }
 
   Future<List<Task>> getTasks() async {
