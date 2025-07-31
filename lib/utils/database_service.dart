@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:taskodoro/managers/priority_manager.dart';
 import 'package:taskodoro/models/priority.dart';
 import 'package:taskodoro/models/task.dart';
-import 'package:taskodoro/utils/priority_service.dart';
 
 // Inspired by https://github.com/thisissandipp/flutter-sqflite-example/blob/main/lib/services/database_service.dart
 class DatabaseService {
@@ -102,7 +102,7 @@ class DatabaseService {
     );
 
     if (priorities.isEmpty) {
-      final PriorityService priorityService = PriorityService();
+      final PriorityManager priorityService = PriorityManager();
       final List<Priority> defaultPriorities = priorityService.getDefaultPriorities();
 
       for (final Priority priority in defaultPriorities) {
@@ -157,7 +157,7 @@ class DatabaseService {
     );
 
     if (priorities.isEmpty) {
-      final PriorityService priorityService = PriorityService();
+      final PriorityManager priorityService = PriorityManager();
       final List<Priority> defaultPriorities = priorityService.getDefaultPriorities();
 
       for (final Priority priority in defaultPriorities) {
@@ -178,12 +178,15 @@ class DatabaseService {
 
   Future<List<Task>> getTasks() async {
     final Database db = await _databaseService.database;
-    final List<Map<String, dynamic>> tasks = await db.query('tasks');
+    final List<Map<String, dynamic>> tasksQuery = await db.query('tasks');
 
-    final PriorityService priorityService = PriorityService();
-    await priorityService.loadPriorities();
+    final List<Task> tasks = <Task>[];
 
-    return List<Task>.generate(tasks.length, (int index) => Task.fromDatabaseMap(tasks[index]));
+    for (final Map<String, dynamic> task in tasksQuery) {
+      tasks.add(await Task.fromDatabaseMap(task));
+    }
+
+    return tasks;
   }
 
   Future<void> insertTask(Task task) async {

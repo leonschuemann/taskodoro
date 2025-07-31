@@ -4,6 +4,7 @@ import 'package:taskodoro/models/task.dart';
 import 'package:taskodoro/themes/spacing_theme.dart';
 import 'package:taskodoro/utils/database_service.dart';
 import 'package:taskodoro/widgets/card_task.dart';
+import 'package:taskodoro/widgets/date_divider.dart';
 
 class MyHomePage extends StatefulWidget {
   final List<Task> tasks = <Task>[];
@@ -104,18 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Column(
               children: <Widget>[
                 const SizedBox(height: 4),
-                Row(
-                  children: <Widget>[
-                    const Expanded(child: Divider()),
-                    const SizedBox(width: SpacingTheme.dueDateDividerGap),
-                    Text(
-                      localizations.noDueDate,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    const SizedBox(width: SpacingTheme.dueDateDividerGap),
-                    const Expanded(child: Divider()),
-                  ],
-                ),
+                DateDivider(localizations.noDueDate),
                 Expanded(
                   child: tasks.isEmpty && !hasLoaded
                       ? const Center(child: CircularProgressIndicator())

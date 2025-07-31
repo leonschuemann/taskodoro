@@ -1,5 +1,5 @@
+import 'package:taskodoro/managers/priority_manager.dart';
 import 'package:taskodoro/models/priority.dart';
-import 'package:taskodoro/utils/priority_service.dart';
 
 class Task {
   final int? id;
@@ -8,7 +8,7 @@ class Task {
   late DateTime timeAdded;
   DateTime? timeStart;
   DateTime? timeDue;
-  Priority priority = PriorityService().getDefaultPriority();
+  Priority priority = PriorityManager().getDefaultPriority();
   String? description;
 
   Task({
@@ -31,7 +31,7 @@ class Task {
     };
   }
 
-  factory Task.fromDatabaseMap(Map<String, dynamic> map) {
+  static Future<Task> fromDatabaseMap(Map<String, dynamic> map) async {
     final Task task = Task(
       id: map['id'] as int? ?? 0,
       name: map['name'] as String? ?? '',
@@ -39,12 +39,13 @@ class Task {
       timeAdded: DateTime.parse(map['timeAdded'] as String),
     );
 
-    final PriorityService priorityService = PriorityService();
+    final PriorityManager priorityService = PriorityManager();
+    final List<Priority> priorities = await priorityService.getPriorities();
 
     task.timeStart = map['timeStart'] != null ? DateTime.parse(map['timeStart'] as String) : null;
     task.timeDue = map['timeDue'] != null ? DateTime.parse(map['timeDue'] as String) : null;
     task.priority = map['priority'] != 0 && map['priority'] != null
-        ? priorityService.getPriority(map['priority'] as int) ?? priorityService.getDefaultPriority()
+        ? priorityService.getPriority(priorities, map['priority'] as int) ?? priorityService.getDefaultPriority()
         : priorityService.getDefaultPriority();
     task.description = map['description'] as String?;
 

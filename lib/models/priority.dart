@@ -11,7 +11,7 @@ class Priority {
     required this.isCreatedByUser,
   });
 
-  factory Priority.fromDatabaseMap(Map<String, dynamic> map) {
+  static Priority fromDatabaseMap(Map<String, dynamic> map) {
     return Priority(
       id: map['id'] as int,
       level: map['level'] as int,

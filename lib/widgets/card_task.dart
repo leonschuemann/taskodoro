@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:taskodoro/l10n/app_localizations.dart';
+import 'package:taskodoro/managers/priority_manager.dart';
 import 'package:taskodoro/models/priority.dart';
 import 'package:taskodoro/models/task.dart';
 import 'package:taskodoro/themes/spacing_theme.dart';
 import 'package:taskodoro/utils/database_service.dart';
-import 'package:taskodoro/utils/priority_service.dart';
 
 class CardTask extends StatefulWidget {
   const CardTask(this.task, {required this.priority, required this.deleteTask, super.key});
@@ -25,6 +25,7 @@ class _CardTaskState extends State<CardTask> {
   late Task task;
   late String priority;
   late VoidCallback deleteTask;
+  List<Priority> priorities = <Priority>[];
 
   DatabaseService databaseService = DatabaseService();
 
@@ -34,6 +35,7 @@ class _CardTaskState extends State<CardTask> {
     task = widget.task;
     priority = widget.priority;
     deleteTask = widget.deleteTask;
+    _loadPriorities();
   }
 
   @override
@@ -43,19 +45,28 @@ class _CardTaskState extends State<CardTask> {
     super.dispose();
   }
 
+  Future<void> _loadPriorities() async {
+    final PriorityManager priorityService = PriorityManager();
+    final List<Priority> priorities = await priorityService.getPriorities();
+
+    setState(() {
+      this.priorities = priorities;
+    });
+  }
+
   Future<void> _updateTask(Task task) async {
     await databaseService.updateTask(task);
   }
 
   @override
   Widget build(BuildContext context) {
-    final PriorityService priorityService = PriorityService();
+    final PriorityManager priorityService = PriorityManager();
 
     const double margin = SpacingTheme.margin;
     const double gap = SpacingTheme.gap;
 
     final List<MenuItemButton> priorities = <MenuItemButton>[
-      for (final Priority currentPriority in priorityService.getPriorities())
+      for (final Priority currentPriority in this.priorities)
         MenuItemButton(
           child: Text(currentPriority.toString()),
           onPressed: () => <void>{
