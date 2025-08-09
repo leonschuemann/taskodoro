@@ -187,7 +187,6 @@ class _CardTaskState extends State<CardTask> {
                         ),
                         padding: SpacingTheme.outlinedButtonPadding,
                       ),
-                      focusNode: priorityButtonFocusNode,
                       onPressed: () {
                         if (controller.isOpen) {
                           controller.close();
