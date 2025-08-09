@@ -6,6 +6,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:taskodoro/managers/priority_manager.dart';
 import 'package:taskodoro/models/priority.dart';
 import 'package:taskodoro/models/task.dart';
+import 'package:taskodoro/models/task_list.dart';
 
 // Inspired by https://github.com/thisissandipp/flutter-sqflite-example/blob/main/lib/services/database_service.dart
 class DatabaseService {
@@ -90,7 +91,7 @@ class DatabaseService {
         'timeDue TEXT, '
         'priority INTEGER, '
         'description TEXT, '
-        'taskListId INTEGER REFERENCES taskLists (id), '
+        'taskListId INTEGER REFERENCES taskLists (id) ON DELETE CASCADE, '
         'FOREIGN KEY (priority) REFERENCES priorities (id) ON DELETE SET NULL '
         ')'
     );
@@ -173,27 +174,15 @@ class DatabaseService {
         ')'
     );
 
-    await db.execute('ALTER TABLE tasks ADD COLUMN taskListId INTEGER REFERENCES taskLists (id)');
+    await db.execute('ALTER TABLE tasks ADD COLUMN taskListId INTEGER REFERENCES taskLists (id) ON DELETE CASCADE');
   }
 
-  Future<List<Task>> getTasks() async {
-    final Database db = await _databaseService.database;
-    final List<Map<String, dynamic>> tasksQuery = await db.query('tasks');
-
-    final List<Task> tasks = <Task>[];
-
-    for (final Map<String, dynamic> task in tasksQuery) {
-      tasks.add(await Task.fromDatabaseMap(task));
-    }
-
-    return tasks;
-  }
-
-  Future<void> insertTask(Task task) async {
+  Future<void> insertTask(Task task, int taskListId) async {
     final Database db = await _databaseService.database;
 
     final Map<String, dynamic> taskMap = task.toDatabaseMap();
     taskMap['id'] = null;
+    taskMap['taskListId'] = taskListId != 0 ? taskListId : null;
 
     await db.insert('tasks', taskMap);
   }
@@ -229,10 +218,68 @@ class DatabaseService {
   Future<void> insertPriority(Priority priority) async {
     final Database db = await _databaseService.database;
 
-    _insertPriorityWithDb(priority, db);
+    await _insertPriorityWithDb(priority, db);
   }
 
   Future<void> _insertPriorityWithDb(Priority priority, Database db) async {
     await db.insert('priorities', priority.toDatabaseMap());
+  }
+
+  Future<List<TaskList>> getTaskLists() async {
+    final Database db = await _databaseService.database;
+    final List<Map<String, dynamic>> taskListsAndTaskUngrouped = await db.rawQuery(
+          'SELECT taskLists.id AS taskListsId, taskLists.name AS taskListsName, tasks.* '
+          'FROM taskLists '
+          'FULL OUTER JOIN tasks ON taskLists.id = tasks.taskListId '
+          'ORDER BY taskListsId'
+    );
+
+    final List<TaskList> taskLists = <TaskList>[];
+
+    for (final Map<String, dynamic> taskListsAndTasks in taskListsAndTaskUngrouped) {
+      final int taskListId = taskListsAndTasks['taskListsId'] as int? ?? 0;
+      final int indexOfTaskList = taskLists.indexWhere((TaskList taskList) => taskList.id == taskListId);
+      Task? task;
+
+      if (taskListsAndTasks['id'] != null) {
+        task = await Task.fromDatabaseMap(taskListsAndTasks);
+      }
+
+      if (indexOfTaskList == -1) {
+        final TaskList newTaskList = TaskList(
+          id: taskListId,
+          name: taskListsAndTasks['taskListsName'] as String? ?? TaskList.getDefaultTaskList().name,
+          tasks: <Task>[],
+        );
+
+        if (task != null) {
+          newTaskList.addTask(task);
+        }
+
+        taskLists.add(newTaskList);
+      } else if (task != null) {
+        taskLists[indexOfTaskList].addTask(task);
+      }
+    }
+    
+    final bool defaultListExists = taskLists.any((TaskList taskList) => taskList.id == 0);
+
+    if (!defaultListExists) {
+      taskLists.insert(0, TaskList.getDefaultTaskList());
+    }
+
+    return taskLists;
+  }
+
+  Future<void> addTaskList(TaskList taskList) async {
+    final Database db = await _databaseService.database;
+    await db.insert('taskLists', taskList.toDatabaseMap());
+
+    if (taskList.tasks.isNotEmpty) {
+      throw ArgumentError('Newly added task list is not empty. '
+          'This is unexpected behaviour, because no tasks are added in the '
+          'addTaskList method. The new task list was added anyway, but the '
+          'tasks are lost.');
+    }
   }
 }

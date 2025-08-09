@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:taskodoro/l10n/app_localizations.dart';
 import 'package:taskodoro/models/task.dart';
+import 'package:taskodoro/models/task_list.dart';
 import 'package:taskodoro/themes/spacing_theme.dart';
 import 'package:taskodoro/utils/database_service.dart';
 import 'package:taskodoro/widgets/card_task.dart';
 import 'package:taskodoro/widgets/date_divider.dart';
+import 'package:taskodoro/widgets/textfield_task_list.dart';
 
 class MyHomePage extends StatefulWidget {
-  final List<Task> tasks = <Task>[];
-
-  MyHomePage({super.key});
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -18,13 +18,22 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final DatabaseService _databaseService = DatabaseService();
   final TextEditingController _newTaskController = TextEditingController();
-  late List<Task> tasks = <Task>[];
+  late List<TaskList> taskLists = <TaskList>[];
+  late int selectedTaskListId = 0;
+
+  TaskList get selectedTaskList {
+    return taskLists.firstWhere(
+      (TaskList list) => list.id == selectedTaskListId,
+      orElse: () => taskLists.isNotEmpty ? taskLists.first : TaskList.getDefaultTaskList(),
+    );
+  }
+
   bool hasLoaded = false;
 
   @override
   void initState() {
     super.initState();
-    _loadTasks();
+    _loadTaskLists();
   }
 
   @override
@@ -62,17 +71,12 @@ class _MyHomePageState extends State<MyHomePage> {
               hintText: localizations.enterNewTask,
             ),
             controller: _newTaskController,
-            onSubmitted: (String str) {
-              if (str.isEmpty) {
+            onSubmitted: (String taskName) {
+              if (taskName.isEmpty) {
                 return;
               }
-
-              setState(() {
-                final Task task = Task(id: null, name: str, isDone: false, timeAdded: DateTime.now());
-                _databaseService.insertTask(task);
-                _loadTasks();
-                _newTaskController.clear();
-              });
+              
+              _addTask(taskName, selectedTaskListId);
             },
           ),
         ),
@@ -97,42 +101,101 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget body(AppLocalizations localizations, BuildContext context) {
     return Expanded(
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1200, minWidth: 400),
-          child: FractionallySizedBox(
-            widthFactor: 0.7,
-            child: Column(
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          if (constraints.maxWidth >= 600) {
+            return Row(
               children: <Widget>[
-                const SizedBox(height: 4),
-                DateDivider(localizations.noDueDate),
                 Expanded(
-                  child: tasks.isEmpty && !hasLoaded
-                      ? const Center(child: CircularProgressIndicator())
-                      : ListView(
-                    children: tasks.map((Task task) {
-                      return CardTask(
-                        key: ValueKey<int>(task.id!),
-                        task,
-                        priority: task.priority.toString(),
-                        deleteTask: () => deleteTask(task.id!),
-                      );
-                    }).toList(),
-                  ),
+                  child: taskListsView()
+                ),
+                const VerticalDivider(),
+                Expanded(
+                  flex: 4,
+                  child: tasksView(localizations),
                 ),
               ],
-            ),
-          ),
-        ),
+            );
+          } else {
+            return ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1000, minWidth: 400),
+              child: tasksView(localizations),
+            );
+          }
+        },
       ),
     );
   }
 
-  Future<void> _loadTasks() async {
-    final List<Task> loadedTasks = await _databaseService.getTasks();
+  Widget tasksView(AppLocalizations localizations) {
+    return FractionallySizedBox(
+      widthFactor: 0.9,
+      child: Column(
+        children: <Widget>[
+          const SizedBox(height: 4), // TODO
+          DateDivider(localizations.noDueDate),
+          Expanded(
+            child: selectedTaskList.getTasks().isEmpty && !hasLoaded
+                ? const Center(child: CircularProgressIndicator())
+                : ListView(
+              children: selectedTaskList.getTasks().map((Task task) {
+                return CardTask(
+                  key: ValueKey<int>(task.id!),
+                  task,
+                  priority: task.priority.toString(),
+                  deleteTask: () => deleteTask(task.id!),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget taskListsView() {
+    final List<TextFieldTaskList> taskListsAndAddButton = taskLists.map((TaskList taskList) {
+      return TextFieldTaskList(
+        taskList: taskList,
+        selectTaskList: () => selectTaskList(taskList),
+        isSelected: taskList.id == selectedTaskListId
+      );
+    }).toList();
+
+    return FractionallySizedBox(
+      widthFactor: 0.9,
+      child: ListView.separated(
+        itemBuilder: (BuildContext context, int index) {
+          if (index == taskListsAndAddButton.length) {
+            return TextButton.icon(
+              onPressed: () {},
+              label: const Text('Add list'),
+              icon: const Icon(Icons.add),
+            );
+          }
+
+          return taskListsAndAddButton[index];
+        },
+        separatorBuilder: (BuildContext context, int index) {
+          return const SizedBox(height: SpacingTheme.smallGap);
+        },
+        itemCount: taskListsAndAddButton.length + 1,
+      ),
+    );
+  }
+
+  Future<void> _addTask(String taskName, int taskListId) async {
+    final Task task = Task(id: null, name: taskName, isDone: false, timeAdded: DateTime.now());
+    await _databaseService.insertTask(task, taskListId);
+    await _loadTaskLists();
+    _newTaskController.clear();
+  }
+
+  Future<void> _loadTaskLists() async {
+    final List<TaskList> taskLists = await _databaseService.getTaskLists();
 
     setState(() {
-      tasks = loadedTasks;
+      this.taskLists = taskLists;
     });
 
     hasLoaded = true;
@@ -140,6 +203,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> deleteTask(int id) async {
     await _databaseService.deleteTask(id);
-    await _loadTasks();
+    await _loadTaskLists();
+  }
+
+  void selectTaskList(TaskList taskList) {
+    if (selectedTaskListId == taskList.id) {
+      return;
+    }
+
+    setState(() {
+      selectedTaskListId = taskList.id!;
+    });
   }
 }
