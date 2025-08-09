@@ -103,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Expanded(
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-          if (constraints.maxWidth >= 600) {
+          if (constraints.maxWidth >= 1000) {
             return Row(
               children: <Widget>[
                 Expanded(
@@ -132,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
       widthFactor: 0.9,
       child: Column(
         children: <Widget>[
-          const SizedBox(height: 4), // TODO
+          const SizedBox(height: SpacingTheme.gapAboveDateDividers),
           DateDivider(localizations.noDueDate),
           Expanded(
             child: selectedTaskList.getTasks().isEmpty && !hasLoaded

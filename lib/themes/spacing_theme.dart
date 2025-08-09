@@ -5,6 +5,7 @@ class SpacingTheme {
   static const double smallGap = 6.0;
   static const double gap = 14.0;
   static const double dueDateDividerGap = 8.0;
+  static const double gapAboveDateDividers = 4.0;
 
   static const double smallIconSize = 24;
   static const BoxConstraints smallIconButtonConstraints = BoxConstraints(
