@@ -271,9 +271,11 @@ class DatabaseService {
     return taskLists;
   }
 
-  Future<void> addTaskList(TaskList taskList) async {
+  Future<int> insertTaskList(TaskList taskList) async {
     final Database db = await _databaseService.database;
-    await db.insert('taskLists', taskList.toDatabaseMap());
+    final Map<String, dynamic> taskListMap = taskList.toDatabaseMap();
+    taskListMap['id'] = null;
+    final int id = await db.insert('taskLists', taskListMap);
 
     if (taskList.tasks.isNotEmpty) {
       throw ArgumentError('Newly added task list is not empty. '
@@ -281,5 +283,7 @@ class DatabaseService {
           'addTaskList method. The new task list was added anyway, but the '
           'tasks are lost.');
     }
+
+    return id;
   }
 }

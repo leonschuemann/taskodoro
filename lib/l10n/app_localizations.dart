@@ -142,6 +142,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Description'**
   String get description;
+
+  /// No description provided for @addTaskList.
+  ///
+  /// In en, this message translates to:
+  /// **'Add list'**
+  String get addTaskList;
+
+  /// No description provided for @enterListName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter list name'**
+  String get enterListName;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

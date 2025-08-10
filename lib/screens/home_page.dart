@@ -20,6 +20,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _newTaskController = TextEditingController();
   late List<TaskList> taskLists = <TaskList>[];
   late int selectedTaskListId = 0;
+  bool isCreatingNewTaskList = false;
 
   TaskList get selectedTaskList {
     return taskLists.firstWhere(
@@ -107,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
             return Row(
               children: <Widget>[
                 Expanded(
-                  child: taskListsView()
+                  child: taskListsView(localizations)
                 ),
                 const VerticalDivider(),
                 Expanded(
@@ -153,33 +154,58 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget taskListsView() {
-    final List<TextFieldTaskList> taskListsAndAddButton = taskLists.map((TaskList taskList) {
+  Widget taskListsView(AppLocalizations localizations) {
+    final List<Widget> taskListsAndAddButton = taskLists.map<Widget>((TaskList taskList) {
       return TextFieldTaskList(
         taskList: taskList,
+        isSelected: taskList.id == selectedTaskListId,
+        localizations: localizations,
         selectTaskList: () => selectTaskList(taskList),
-        isSelected: taskList.id == selectedTaskListId
       );
     }).toList();
+
+    if (isCreatingNewTaskList) {
+      taskListsAndAddButton.add(
+        TextFieldTaskList(
+          taskList: TaskList(id: -1, name: '', tasks: <Task>[]),
+          isSelected: false,
+          localizations: localizations,
+          onEditingComplete: (String name) {
+            _addTaskList(name);
+          },
+          onEditingCanceled: _cancelAddingTaskList,
+          isEditing: true,
+        )
+      );
+    } else {
+      taskListsAndAddButton.add(
+        TextButton.icon(
+          onPressed: () {
+            setState(() {
+              isCreatingNewTaskList = true;
+            });
+          },
+          style: TextButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: SpacingTheme.roundedRectangleBorderRadius,
+            ),
+          ),
+          label: Text(localizations.addTaskList),
+          icon: const Icon(Icons.add),
+        )
+      );
+    }
 
     return FractionallySizedBox(
       widthFactor: 0.9,
       child: ListView.separated(
         itemBuilder: (BuildContext context, int index) {
-          if (index == taskListsAndAddButton.length) {
-            return TextButton.icon(
-              onPressed: () {},
-              label: const Text('Add list'),
-              icon: const Icon(Icons.add),
-            );
-          }
-
           return taskListsAndAddButton[index];
         },
         separatorBuilder: (BuildContext context, int index) {
           return const SizedBox(height: SpacingTheme.smallGap);
         },
-        itemCount: taskListsAndAddButton.length + 1,
+        itemCount: taskListsAndAddButton.length,
       ),
     );
   }
@@ -213,6 +239,28 @@ class _MyHomePageState extends State<MyHomePage> {
 
     setState(() {
       selectedTaskListId = taskList.id!;
+    });
+  }
+
+  Future<void> _addTaskList(String taskListName) async {
+    final TaskList taskList = TaskList(
+      id: null,
+      name: taskListName,
+      tasks: <Task>[]
+    );
+
+    final int id = await _databaseService.insertTaskList(taskList);
+
+    setState(() {
+      selectedTaskListId = id;
+      isCreatingNewTaskList = false;
+      _loadTaskLists();
+    });
+  }
+
+  void _cancelAddingTaskList() {
+    setState(() {
+      isCreatingNewTaskList = false;
     });
   }
 }

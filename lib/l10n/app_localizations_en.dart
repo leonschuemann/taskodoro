@@ -31,4 +31,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get description => 'Description';
+
+  @override
+  String get addTaskList => 'Add list';
+
+  @override
+  String get enterListName => 'Enter list name';
 }

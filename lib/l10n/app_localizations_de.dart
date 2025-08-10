@@ -31,4 +31,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get description => 'Beschreibung';
+
+  @override
+  String get addTaskList => 'Liste hinzufügen';
+
+  @override
+  String get enterListName => 'Name der Liste eingeben';
 }

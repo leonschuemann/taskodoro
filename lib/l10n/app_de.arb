@@ -6,5 +6,7 @@
   "priority": "Priorität",
   "taskDelete": "Löschen",
   "name": "Name",
-  "description": "Beschreibung"
+  "description": "Beschreibung",
+  "addTaskList": "Liste hinzufügen",
+  "enterListName": "Name der Liste eingeben"
 }

@@ -6,5 +6,7 @@
   "priority": "Priority",
   "taskDelete": "Delete",
   "name": "Name",
-  "description": "Description"
+  "description": "Description",
+  "addTaskList": "Add list",
+  "enterListName": "Enter list name"
 }
