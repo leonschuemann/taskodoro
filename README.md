@@ -3,9 +3,9 @@
 Taskodoro is a Flutter-powered to-do application with a built-in Pomodoro timer and a strong focus on keyboard shortcuts and overall usability. It helps you manage tasks and focus sessions seamlessly, boosting productivity with minimal friction.
 
 ## Features
-- [ ] **Task Management**
+- [x] **Task Management**
   - [x] Create, edit, complete, and delete tasks
-  - [ ] Organize tasks into customizable lists
+  - [x] Organize tasks into lists
 
 - [ ] **Integrated Pomodoro Timer**
   - [ ] 25-minute focus sessions and 5-minute breaks (fully configurable)
