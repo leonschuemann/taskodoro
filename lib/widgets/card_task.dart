@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:taskodoro/l10n/app_localizations.dart';
 import 'package:taskodoro/managers/priority_manager.dart';
 import 'package:taskodoro/models/priority.dart';
@@ -9,10 +10,12 @@ import 'package:taskodoro/themes/spacing_theme.dart';
 import 'package:taskodoro/utils/database_service.dart';
 
 class CardTask extends StatefulWidget {
-  const CardTask(this.task, {required this.priority, required this.deleteTask, super.key});
+  const CardTask(this.task,
+      {required this.priority, required this.deleteTask, required this.selectTaskDate, super.key});
   final Task task;
   final String priority;
   final VoidCallback deleteTask;
+  final ValueChanged<Task> selectTaskDate;
 
   @override
   State<StatefulWidget> createState() => _CardTaskState();
@@ -81,6 +84,9 @@ class _CardTaskState extends State<CardTask> {
 
     final FocusNode priorityButtonFocusNode = FocusNode(debugLabel: 'Priority Menu Button');
     final AppLocalizations? localizations = AppLocalizations.of(context);
+    final String locale = Localizations
+        .localeOf(context)
+        .languageCode;
     taskNameController.text = task.name;
     taskDescriptionController.text = task.description ?? '';
 
@@ -152,19 +158,36 @@ class _CardTaskState extends State<CardTask> {
                   ),
                   padding: SpacingTheme.outlinedButtonPadding,
                 ),
-                onPressed: () {
-                  throw ArgumentError('Not yet implemented');
+                onPressed: () async {
+                  final DateTime? date = await showDatePicker(
+                    context: context,
+                    firstDate: DateTime(1970),
+                    lastDate: DateTime(2037, 12),
+                    initialDate: task.timeDue,
+                  );
+
+                  if (date == null) {
+                    return;
+                  }
+
+                  task.timeDue = date;
+                  widget.selectTaskDate(task);
                 },
                 label: Row(
                   children: <Widget>[
                     Text(
-                      localizations.chooseDate,
+                      task.timeDue == null
+                          ? localizations.chooseDate
+                          : DateFormat('dd.MM.yyyy', locale).format(task.timeDue!),
+                      // TODO: Make format configurable
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     const SizedBox(width: gap,),
                     IconButton(
                       onPressed: () {
-                        throw ArgumentError('Not yet implemented');
+                        task.timeDue = null;
+
+                        widget.selectTaskDate(task);
                       },
                       icon: const Icon(Icons.close),
                       padding: EdgeInsets.zero,

@@ -145,6 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   task,
                   priority: task.priority.toString(),
                   deleteTask: () => deleteTask(task.id!),
+                  selectTaskDate: selectTaskDate,
                 );
               }).toList(),
             ),
@@ -262,5 +263,11 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       isCreatingNewTaskList = false;
     });
+  }
+
+  Future<void> selectTaskDate(Task task) async {
+    await _databaseService.updateTask(task);
+
+    await _loadTaskLists();
   }
 }
