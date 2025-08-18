@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
       darkTheme: MaterialTheme(
           ApplicationTextTheme().createTextTheme(context, 'Lato', 'Lato'),
       ).theme(MaterialTheme.darkScheme()),
-      home: const MyHomePage(),
+      home: const TasksPage(),
       debugShowCheckedModeBanner: false,
     );
   }

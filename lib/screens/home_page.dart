@@ -8,14 +8,14 @@ import 'package:taskodoro/widgets/card_task.dart';
 import 'package:taskodoro/widgets/date_divider.dart';
 import 'package:taskodoro/widgets/textfield_task_list.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class TasksPage extends StatefulWidget {
+  const TasksPage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<TasksPage> createState() => _TasksPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _TasksPageState extends State<TasksPage> {
   final DatabaseService _databaseService = DatabaseService();
   final TextEditingController _newTaskController = TextEditingController();
   late List<TaskList> taskLists = <TaskList>[];
