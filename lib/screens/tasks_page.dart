@@ -3,6 +3,7 @@ import 'package:taskodoro/l10n/app_localizations.dart';
 import 'package:taskodoro/models/task.dart';
 import 'package:taskodoro/models/task_list.dart';
 import 'package:taskodoro/screens/pomodoro_page.dart';
+import 'package:taskodoro/screens/settings_page.dart';
 import 'package:taskodoro/themes/spacing_theme.dart';
 import 'package:taskodoro/utils/database_service.dart';
 import 'package:taskodoro/widgets/card_task.dart';
@@ -85,15 +86,24 @@ class _TasksPageState extends State<TasksPage> {
         const Spacer(flex: 2,),
         IconButton(
           onPressed: () {
-            throw ArgumentError('Not yet implemented');
+            Navigator.push(
+              context,
+              MaterialPageRoute<PomodoroPage>(
+                builder: (BuildContext context) => const SettingsPage()
+              )
+            );
           },
           icon: const Icon(Icons.settings),
           iconSize: SpacingTheme.smallIconSize,
         ),
         IconButton(
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute<PomodoroPage>(
-                builder: (BuildContext context) => const PomodoroPage()));
+            Navigator.push(
+              context,
+              MaterialPageRoute<PomodoroPage>(
+                builder: (BuildContext context) => const PomodoroPage()
+              )
+            );
           },
           icon: const Icon(Icons.timer),
           iconSize: SpacingTheme.smallIconSize,
