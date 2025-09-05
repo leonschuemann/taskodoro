@@ -1,5 +1,6 @@
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
+import 'package:taskodoro/l10n/app_localizations.dart';
 
 class PomodoroPage extends StatefulWidget {
   const PomodoroPage({super.key});
@@ -15,10 +16,16 @@ class _PomodoroPageState extends State<PomodoroPage> {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
-      body: Stack(
+      appBar: AppBar(
+        title: Text(localizations.pomodoroTimer),
+        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+      ),
+      body: Column(
         children: <Widget>[
-          Positioned.fill(
+          Expanded(
             child: Row(
               children: <Widget>[
                 const Expanded(child: SizedBox()),
@@ -100,15 +107,6 @@ class _PomodoroPageState extends State<PomodoroPage> {
                   child: FractionallySizedBox(child: Center(child: Text('Selected tasks'))),
                 ),
               ],
-            ),
-          ),
-          Align(
-            alignment: Alignment.topLeft,
-            child: IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.arrow_back),
             ),
           ),
         ],
