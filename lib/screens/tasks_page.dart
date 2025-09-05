@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskodoro/l10n/app_localizations.dart';
 import 'package:taskodoro/models/task.dart';
 import 'package:taskodoro/models/task_list.dart';
@@ -11,7 +12,9 @@ import 'package:taskodoro/widgets/date_divider.dart';
 import 'package:taskodoro/widgets/textfield_task_list.dart';
 
 class TasksPage extends StatefulWidget {
-  const TasksPage({super.key});
+  final SharedPreferences sharedPreferences;
+
+  const TasksPage({super.key, required this.sharedPreferences});
 
   @override
   State<TasksPage> createState() => _TasksPageState();
@@ -89,7 +92,7 @@ class _TasksPageState extends State<TasksPage> {
             Navigator.push(
               context,
               MaterialPageRoute<PomodoroPage>(
-                builder: (BuildContext context) => const SettingsPage()
+                builder: (BuildContext context) => SettingsPage(sharedPreferences: widget.sharedPreferences)
               )
             );
           },
@@ -101,7 +104,7 @@ class _TasksPageState extends State<TasksPage> {
             Navigator.push(
               context,
               MaterialPageRoute<PomodoroPage>(
-                builder: (BuildContext context) => const PomodoroPage()
+                builder: (BuildContext context) => PomodoroPage(sharedPreferences: widget.sharedPreferences)
               )
             );
           },

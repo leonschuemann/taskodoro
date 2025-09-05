@@ -6,7 +6,9 @@ import 'package:taskodoro/l10n/app_localizations.dart';
 import 'package:taskodoro/themes/spacing_theme.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key});
+  final SharedPreferences sharedPreferences;
+
+  const SettingsPage({super.key, required this.sharedPreferences});
 
   @override
   State<StatefulWidget> createState() => SettingsPageState();
@@ -17,7 +19,6 @@ class SettingsPageState extends State<SettingsPage> {
   final TextEditingController _focusTimerController = TextEditingController();
   final TextEditingController _shortBreakTimerController = TextEditingController();
   final TextEditingController _longBreakTimerController = TextEditingController();
-  bool _isLoading = true;
 
   @override
   void initState() {
@@ -40,11 +41,7 @@ class SettingsPageState extends State<SettingsPage> {
     const double textFieldWidth = 56;
     int repetitions;
 
-    if (!_isLoading && _sharedPreferences.getInt('repetitions') != null) {
-      repetitions = _sharedPreferences.getInt('repetitions')!;
-    } else {
-      repetitions = DefaultSettings.repetitions;
-    }
+    repetitions = _sharedPreferences.getInt('repetitions')!;
 
     final GlobalKey<State<StatefulWidget>> pomodoroKey = GlobalKey();
 
@@ -154,8 +151,8 @@ class SettingsPageState extends State<SettingsPage> {
     );
   }
   
-  Future<void> _initializeSharedPreferences() async {
-    _sharedPreferences = await SharedPreferences.getInstance(); // TODO: exchange with own YAML file
+  void _initializeSharedPreferences() {
+    _sharedPreferences = widget.sharedPreferences; // TODO: exchange with own YAML file
     final int focusTime = _sharedPreferences.getInt('focusTime') ?? DefaultSettings.focusTime;
     final int longBreakTime = _sharedPreferences.getInt('longBreakTime') ?? DefaultSettings.longBreakTime;
     final int shortBreakTime = _sharedPreferences.getInt('shortBreakTime') ?? DefaultSettings.shortBreakTime;
@@ -164,7 +161,6 @@ class SettingsPageState extends State<SettingsPage> {
       _focusTimerController.text = focusTime.toString();
       _longBreakTimerController.text = longBreakTime.toString();
       _shortBreakTimerController.text = shortBreakTime.toString();
-      _isLoading = false;
     });
   }
 

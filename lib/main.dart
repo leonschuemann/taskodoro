@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskodoro/l10n/app_localizations.dart';
 import 'package:taskodoro/screens/tasks_page.dart';
 import 'package:taskodoro/themes/text_theme.dart';
 import 'package:taskodoro/themes/theme.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  final SharedPreferences _sharedPreferences = await SharedPreferences.getInstance();
+  runApp(MyApp(sharedPreferences: _sharedPreferences));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final SharedPreferences sharedPreferences;
+
+  const MyApp({super.key, required this.sharedPreferences});
 
   // This widget is the root of your application.
   @override
@@ -33,7 +37,7 @@ class MyApp extends StatelessWidget {
       darkTheme: MaterialTheme(
           ApplicationTextTheme().createTextTheme(context, 'Lato', 'Lato'),
       ).theme(MaterialTheme.darkScheme()),
-      home: const TasksPage(),
+      home: TasksPage(sharedPreferences: sharedPreferences,),
       debugShowCheckedModeBanner: false,
     );
   }
