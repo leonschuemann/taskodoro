@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -37,4 +38,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get enterListName => 'Enter list name';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get pomodoroTimer => 'Pomodoro Timer';
+
+  @override
+  String get focusTimer => 'Focus Timer';
+
+  @override
+  String get longBreakTimer => 'Long Break Timer';
+
+  @override
+  String get shortBreakTimer => 'Short Break Timer';
+
+  @override
+  String get amountOfRepetitions => 'Amount of Repetitions';
 }

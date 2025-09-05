@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskodoro/constants/default_settings.dart';
+import 'package:taskodoro/l10n/app_localizations.dart';
 import 'package:taskodoro/themes/spacing_theme.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -34,6 +35,8 @@ class SettingsPageState extends State<SettingsPage> {
   
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
+
     const double textFieldWidth = 56;
     int repetitions;
 
@@ -45,11 +48,11 @@ class SettingsPageState extends State<SettingsPage> {
 
     final List<Widget> settings = <Widget>[
       Text(
-        'Pomodoro Timer',
+        localizations.pomodoroTimer,
         style: Theme.of(context).textTheme.headlineSmall,
       ),
       textInputSetting(
-        text: 'Focus Timer',
+        text: localizations.focusTimer,
         textFieldWidth: textFieldWidth,
         onTextFieldChanged: (String value) async {
           await _sharedPreferences.setInt('focusTime', int.parse(value));
@@ -58,7 +61,7 @@ class SettingsPageState extends State<SettingsPage> {
         maxInputLength: 3,
       ),
       textInputSetting(
-        text: 'Long Break Timer',
+        text: localizations.longBreakTimer,
         textFieldWidth: textFieldWidth,
         onTextFieldChanged: (String value) async {
           await _sharedPreferences.setInt('longBreakTime', int.parse(value));
@@ -67,7 +70,7 @@ class SettingsPageState extends State<SettingsPage> {
         maxInputLength: 3,
       ),
       textInputSetting(
-        text: 'Short Break Timer',
+        text: localizations.shortBreakTimer,
         textFieldWidth: textFieldWidth,
         onTextFieldChanged: (String value) async {
           await _sharedPreferences.setInt('shortBreakTime', int.parse(value));
@@ -77,7 +80,7 @@ class SettingsPageState extends State<SettingsPage> {
       ),
       Row(
         children: <Widget>[
-          Text('Amount of repetitions'),
+          Text(localizations.amountOfRepetitions),
           const Spacer(),
           Text(DefaultSettings.minRepetitions.toString()),
           Slider(
@@ -101,7 +104,7 @@ class SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: Text(localizations.settings),
         backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
       ),
       body: Padding(

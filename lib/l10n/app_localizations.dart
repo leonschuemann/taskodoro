@@ -154,6 +154,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter list name'**
   String get enterListName;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @pomodoroTimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Pomodoro Timer'**
+  String get pomodoroTimer;
+
+  /// No description provided for @focusTimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus Timer'**
+  String get focusTimer;
+
+  /// No description provided for @longBreakTimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Long Break Timer'**
+  String get longBreakTimer;
+
+  /// No description provided for @shortBreakTimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Short Break Timer'**
+  String get shortBreakTimer;
+
+  /// No description provided for @amountOfRepetitions.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount of Repetitions'**
+  String get amountOfRepetitions;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

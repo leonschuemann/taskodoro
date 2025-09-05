@@ -8,5 +8,11 @@
   "name": "Name",
   "description": "Beschreibung",
   "addTaskList": "Liste hinzufügen",
-  "enterListName": "Name der Liste eingeben"
+  "enterListName": "Name der Liste eingeben",
+  "settings": "Einstellungen",
+  "pomodoroTimer": "Pomodoro Timer",
+  "focusTimer": "Fokuszeit",
+  "longBreakTimer": "Lange Pausenzeit",
+  "shortBreakTimer": "Kurze Pausenzeit",
+  "amountOfRepetitions": "Anzahl der Wiederholungen"
 }

@@ -8,5 +8,11 @@
   "name": "Name",
   "description": "Description",
   "addTaskList": "Add list",
-  "enterListName": "Enter list name"
+  "enterListName": "Enter list name",
+  "settings": "Settings",
+  "pomodoroTimer": "Pomodoro Timer",
+  "focusTimer": "Focus Timer",
+  "longBreakTimer": "Long Break Timer",
+  "shortBreakTimer": "Short Break Timer",
+  "amountOfRepetitions": "Amount of Repetitions"
 }
