@@ -46,66 +46,13 @@ class SettingsPageState extends State<SettingsPage> {
       repetitions = DefaultSettings.repetitions;
     }
 
-    final List<Widget> settings = <Widget>[
-      Text(
-        localizations.pomodoroTimer,
-        style: Theme.of(context).textTheme.headlineSmall,
-      ),
-      textInputSetting(
-        text: localizations.focusTimer,
-        textFieldWidth: textFieldWidth,
-        onTextFieldChanged: (String value) async {
-          await _sharedPreferences.setInt('focusTime', int.parse(value));
-        },
-        controller: _focusTimerController,
-        maxInputLength: 3,
-      ),
-      textInputSetting(
-        text: localizations.longBreakTimer,
-        textFieldWidth: textFieldWidth,
-        onTextFieldChanged: (String value) async {
-          await _sharedPreferences.setInt('longBreakTime', int.parse(value));
-        },
-        controller: _longBreakTimerController,
-        maxInputLength: 3,
-      ),
-      textInputSetting(
-        text: localizations.shortBreakTimer,
-        textFieldWidth: textFieldWidth,
-        onTextFieldChanged: (String value) async {
-          await _sharedPreferences.setInt('shortBreakTime', int.parse(value));
-        },
-        controller: _shortBreakTimerController,
-        maxInputLength: 3,
-      ),
-      Row(
-        children: <Widget>[
-          Text(localizations.amountOfRepetitions),
-          const Spacer(),
-          Text(DefaultSettings.minRepetitions.toString()),
-          Slider(
-            value: repetitions.toDouble(),
-            onChanged: (double value) async {
-              _sharedPreferences.setInt('repetitions', value.toInt());
-
-              setState(() {
-                repetitions = value.toInt();
-              });
-            },
-            min: DefaultSettings.minRepetitions.toDouble(),
-            max: DefaultSettings.maxRepetitions.toDouble(),
-            divisions: DefaultSettings.maxRepetitions - DefaultSettings.minRepetitions,
-            label: repetitions.toString(),
-          ),
-          Text(DefaultSettings.maxRepetitions.toString()),
-        ],
-      )
-    ];
+    final GlobalKey<State<StatefulWidget>> pomodoroKey = GlobalKey();
 
     return Scaffold(
       appBar: AppBar(
         title: Text(localizations.settings),
         backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+        scrolledUnderElevation: 0.0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -115,7 +62,18 @@ class SettingsPageState extends State<SettingsPage> {
               child: FractionallySizedBox(
                 child: Column(
                   children: <Widget>[
-                    Text('Sections'),
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: SpacingTheme.roundedRectangleBorderRadius,
+                        ),
+                        overlayColor: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.1),
+                      ),
+                      onPressed: () {
+                        Scrollable.ensureVisible(pomodoroKey.currentContext!);
+                      },
+                      child: Text(localizations.pomodoroTimer)
+                    ),
                   ],
                 )
               ),
@@ -125,14 +83,68 @@ class SettingsPageState extends State<SettingsPage> {
               flex: 4,
               child: FractionallySizedBox(
                 widthFactor: 0.5,
-                child: ListView.separated(
-                    itemBuilder: (BuildContext context, int index) {
-                      return settings[index];
-                    },
-                    separatorBuilder: (BuildContext context, int index) {
-                      return const SizedBox(height: SpacingTheme.smallGap);
-                    },
-                    itemCount: settings.length,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          key: pomodoroKey,
+                          localizations.pomodoroTimer,
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                        textInputSetting(
+                          text: localizations.focusTimer,
+                          textFieldWidth: textFieldWidth,
+                          onTextFieldChanged: (String value) async {
+                            await _sharedPreferences.setInt('focusTime', int.parse(value));
+                          },
+                          controller: _focusTimerController,
+                          maxInputLength: 3,
+                        ),
+                        textInputSetting(
+                          text: localizations.longBreakTimer,
+                          textFieldWidth: textFieldWidth,
+                          onTextFieldChanged: (String value) async {
+                            await _sharedPreferences.setInt('longBreakTime', int.parse(value));
+                          },
+                          controller: _longBreakTimerController,
+                          maxInputLength: 3,
+                        ),
+                        textInputSetting(
+                          text: localizations.shortBreakTimer,
+                          textFieldWidth: textFieldWidth,
+                          onTextFieldChanged: (String value) async {
+                            await _sharedPreferences.setInt('shortBreakTime', int.parse(value));
+                          },
+                          controller: _shortBreakTimerController,
+                          maxInputLength: 3,
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text(localizations.amountOfRepetitions),
+                            const Spacer(),
+                            Text(DefaultSettings.minRepetitions.toString()),
+                            Slider(
+                              value: repetitions.toDouble(),
+                              onChanged: (double value) async {
+                                _sharedPreferences.setInt('repetitions', value.toInt());
+
+                                setState(() {
+                                  repetitions = value.toInt();
+                                });
+                              },
+                              min: DefaultSettings.minRepetitions.toDouble(),
+                              max: DefaultSettings.maxRepetitions.toDouble(),
+                              divisions: DefaultSettings.maxRepetitions - DefaultSettings.minRepetitions,
+                              label: repetitions.toString(),
+                            ),
+                            Text(DefaultSettings.maxRepetitions.toString()),
+                          ],
+                        )
+                      ]
+                    ),
+                  ),
                 )
               ),
             )
