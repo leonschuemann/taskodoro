@@ -19,38 +19,11 @@ class SettingsPage extends StatefulWidget {
 
 class SettingsPageState extends State<SettingsPage> {
   late final SharedPreferences _sharedPreferences;
-  final TextEditingController _focusTimerController = TextEditingController();
-  final TextEditingController _shortBreakTimerController = TextEditingController();
-  final TextEditingController _longBreakTimerController = TextEditingController();
-  final FocusNode _focusTimerFocusNode = FocusNode();
-  final FocusNode _shortBreakTimerFocusNode = FocusNode();
-  final FocusNode _longBreakTimerFocusNode = FocusNode();
 
   @override
   void initState() {
-    _initializeSharedPreferences();
+    _sharedPreferences = widget.sharedPreferences;
     super.initState();
-
-    _focusTimerFocusNode.addListener(() {
-      _updateSharedPreferencesFocusNodeHelper(_focusTimerFocusNode, 'focusTime', _focusTimerController.text);
-    });
-    _shortBreakTimerFocusNode.addListener(() {
-      _updateSharedPreferencesFocusNodeHelper(_shortBreakTimerFocusNode, 'shortBreakTime', _shortBreakTimerController.text);
-    });
-    _longBreakTimerFocusNode.addListener(() {
-      _updateSharedPreferencesFocusNodeHelper(_longBreakTimerFocusNode, 'longBreakTime', _longBreakTimerController.text);
-    });
-  }
-
-  @override
-  void dispose() {
-    _focusTimerController.dispose();
-    _shortBreakTimerController.dispose();
-    _longBreakTimerController.dispose();
-    _focusTimerFocusNode.dispose();
-    _shortBreakTimerFocusNode.dispose();
-    _longBreakTimerFocusNode.dispose();
-    super.dispose();
   }
   
   @override
@@ -112,9 +85,8 @@ class SettingsPageState extends State<SettingsPage> {
                           onSave: (String value) async {
                             await _updateSharedPreferences('focusTime', value);
                           },
-                          controller: _focusTimerController,
+                          initialValue: _sharedPreferences.getInt('focusTime') ?? DefaultSettings.focusTime,
                           maxInputLength: 3,
-                          focusNode: _focusTimerFocusNode
                         ),
                         TextInputSetting(
                           text: localizations.longBreakTimer,
@@ -122,9 +94,8 @@ class SettingsPageState extends State<SettingsPage> {
                           onSave: (String value) async {
                             await _updateSharedPreferences('longBreakTime', value);
                           },
-                          controller: _longBreakTimerController,
+                          initialValue: _sharedPreferences.getInt('longBreakTime') ?? DefaultSettings.longBreakTime,
                           maxInputLength: 3,
-                          focusNode: _longBreakTimerFocusNode
                         ),
                         TextInputSetting(
                           text: localizations.shortBreakTimer,
@@ -132,9 +103,8 @@ class SettingsPageState extends State<SettingsPage> {
                           onSave: (String value) async {
                             await _updateSharedPreferences('shortBreakTime', value);
                           },
-                          controller: _shortBreakTimerController,
+                          initialValue: _sharedPreferences.getInt('shortBreakTime') ?? DefaultSettings.shortBreakTime,
                           maxInputLength: 3,
-                          focusNode: _shortBreakTimerFocusNode
                         ),
                         SliderSettings(
                           settingName: localizations.amountOfRepetitions,
@@ -154,19 +124,6 @@ class SettingsPageState extends State<SettingsPage> {
       ),
     );
   }
-  
-  void _initializeSharedPreferences() {
-    _sharedPreferences = widget.sharedPreferences; // TODO: exchange with own YAML file
-    final int focusTime = _sharedPreferences.getInt('focusTime') ?? DefaultSettings.focusTime;
-    final int longBreakTime = _sharedPreferences.getInt('longBreakTime') ?? DefaultSettings.longBreakTime;
-    final int shortBreakTime = _sharedPreferences.getInt('shortBreakTime') ?? DefaultSettings.shortBreakTime;
-
-    setState(() {
-      _focusTimerController.text = focusTime.toString();
-      _longBreakTimerController.text = longBreakTime.toString();
-      _shortBreakTimerController.text = shortBreakTime.toString();
-    });
-  }
 
   Future<void> _updateSharedPreferences(String setting, String value) async {
     if (value.isEmpty) {
@@ -174,11 +131,5 @@ class SettingsPageState extends State<SettingsPage> {
     }
     
     await _sharedPreferences.setInt(setting, int.parse(value));
-  }
-
-  void _updateSharedPreferencesFocusNodeHelper(FocusNode focusNode, String setting, String value) {
-    if (!focusNode.hasFocus) {
-      _updateSharedPreferences(setting, value);
-    }
   }
 }
