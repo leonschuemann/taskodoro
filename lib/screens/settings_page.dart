@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,11 +21,24 @@ class SettingsPageState extends State<SettingsPage> {
   final TextEditingController _focusTimerController = TextEditingController();
   final TextEditingController _shortBreakTimerController = TextEditingController();
   final TextEditingController _longBreakTimerController = TextEditingController();
+  final FocusNode _focusTimerFocusNode = FocusNode();
+  final FocusNode _shortBreakTimerFocusNode = FocusNode();
+  final FocusNode _longBreakTimerFocusNode = FocusNode();
 
   @override
   void initState() {
     _initializeSharedPreferences();
     super.initState();
+
+    _focusTimerFocusNode.addListener(() {
+      _updateSharedPreferencesFocusNodeHelper(_focusTimerFocusNode, 'focusTime', _focusTimerController.text);
+    });
+    _shortBreakTimerFocusNode.addListener(() {
+      _updateSharedPreferencesFocusNodeHelper(_shortBreakTimerFocusNode, 'shortBreakTime', _shortBreakTimerController.text);
+    });
+    _longBreakTimerFocusNode.addListener(() {
+      _updateSharedPreferencesFocusNodeHelper(_longBreakTimerFocusNode, 'longBreakTime', _longBreakTimerController.text);
+    });
   }
 
   @override
@@ -31,6 +46,9 @@ class SettingsPageState extends State<SettingsPage> {
     _focusTimerController.dispose();
     _shortBreakTimerController.dispose();
     _longBreakTimerController.dispose();
+    _focusTimerFocusNode.dispose();
+    _shortBreakTimerFocusNode.dispose();
+    _longBreakTimerFocusNode.dispose();
     super.dispose();
   }
   
@@ -93,29 +111,32 @@ class SettingsPageState extends State<SettingsPage> {
                         textInputSetting(
                           text: localizations.focusTimer,
                           textFieldWidth: textFieldWidth,
-                          onTextFieldChanged: (String value) async {
-                            await _sharedPreferences.setInt('focusTime', int.parse(value));
+                          onSave: (String value) async {
+                            await _updateSharedPreferences('focusTime', value);
                           },
                           controller: _focusTimerController,
                           maxInputLength: 3,
+                          focusNode: _focusTimerFocusNode
                         ),
                         textInputSetting(
                           text: localizations.longBreakTimer,
                           textFieldWidth: textFieldWidth,
-                          onTextFieldChanged: (String value) async {
-                            await _sharedPreferences.setInt('longBreakTime', int.parse(value));
+                          onSave: (String value) async {
+                            await _updateSharedPreferences('longBreakTime', value);
                           },
                           controller: _longBreakTimerController,
                           maxInputLength: 3,
+                          focusNode: _longBreakTimerFocusNode
                         ),
                         textInputSetting(
                           text: localizations.shortBreakTimer,
                           textFieldWidth: textFieldWidth,
-                          onTextFieldChanged: (String value) async {
-                            await _sharedPreferences.setInt('shortBreakTime', int.parse(value));
+                          onSave: (String value) async {
+                            await _updateSharedPreferences('shortBreakTime', value);
                           },
                           controller: _shortBreakTimerController,
                           maxInputLength: 3,
+                          focusNode: _shortBreakTimerFocusNode
                         ),
                         Row(
                           children: <Widget>[
@@ -167,9 +188,10 @@ class SettingsPageState extends State<SettingsPage> {
   Widget textInputSetting({
     required String text,
     required double textFieldWidth,
-    required ValueChanged<String> onTextFieldChanged,
+    required ValueChanged<String> onSave,
     required TextEditingController controller,
-    required int maxInputLength
+    required int maxInputLength,
+    required FocusNode focusNode
   }) {
     return Row(
       children: <Widget>[
@@ -178,7 +200,7 @@ class SettingsPageState extends State<SettingsPage> {
         SizedBox(
           width: textFieldWidth,
           child: TextField(
-            onChanged: onTextFieldChanged,
+            onSubmitted: onSave,
             controller: controller,
             decoration: InputDecoration(
               border: OutlineInputBorder(
@@ -189,9 +211,24 @@ class SettingsPageState extends State<SettingsPage> {
             inputFormatters: <TextInputFormatter>[
               LengthLimitingTextInputFormatter(maxInputLength),
             ],
+            focusNode: focusNode,
           ),
         ),
       ],
     );
+  }
+
+  Future<void> _updateSharedPreferences(String setting, String value) async {
+    if (value.isEmpty) {
+      return;
+    }
+    
+    await _sharedPreferences.setInt(setting, int.parse(value));
+  }
+
+  void _updateSharedPreferencesFocusNodeHelper(FocusNode focusNode, String setting, String value) {
+    if (!focusNode.hasFocus) {
+      _updateSharedPreferences(setting, value);
+    }
   }
 }
