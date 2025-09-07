@@ -1,11 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskodoro/constants/default_settings.dart';
 import 'package:taskodoro/l10n/app_localizations.dart';
 import 'package:taskodoro/themes/spacing_theme.dart';
+import 'package:taskodoro/widgets/slider_setting.dart';
+import 'package:taskodoro/widgets/text_input_setting.dart';
 
 class SettingsPage extends StatefulWidget {
   final SharedPreferences sharedPreferences;
@@ -57,9 +58,6 @@ class SettingsPageState extends State<SettingsPage> {
     final AppLocalizations localizations = AppLocalizations.of(context)!;
 
     const double textFieldWidth = 56;
-    int repetitions;
-
-    repetitions = _sharedPreferences.getInt('repetitions')!;
 
     final GlobalKey<State<StatefulWidget>> pomodoroKey = GlobalKey();
 
@@ -108,7 +106,7 @@ class SettingsPageState extends State<SettingsPage> {
                           localizations.pomodoroTimer,
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
-                        textInputSetting(
+                        TextInputSetting(
                           text: localizations.focusTimer,
                           textFieldWidth: textFieldWidth,
                           onSave: (String value) async {
@@ -118,7 +116,7 @@ class SettingsPageState extends State<SettingsPage> {
                           maxInputLength: 3,
                           focusNode: _focusTimerFocusNode
                         ),
-                        textInputSetting(
+                        TextInputSetting(
                           text: localizations.longBreakTimer,
                           textFieldWidth: textFieldWidth,
                           onSave: (String value) async {
@@ -128,7 +126,7 @@ class SettingsPageState extends State<SettingsPage> {
                           maxInputLength: 3,
                           focusNode: _longBreakTimerFocusNode
                         ),
-                        textInputSetting(
+                        TextInputSetting(
                           text: localizations.shortBreakTimer,
                           textFieldWidth: textFieldWidth,
                           onSave: (String value) async {
@@ -138,27 +136,12 @@ class SettingsPageState extends State<SettingsPage> {
                           maxInputLength: 3,
                           focusNode: _shortBreakTimerFocusNode
                         ),
-                        Row(
-                          children: <Widget>[
-                            Text(localizations.amountOfRepetitions),
-                            const Spacer(),
-                            Text(DefaultSettings.minRepetitions.toString()),
-                            Slider(
-                              value: repetitions.toDouble(),
-                              onChanged: (double value) async {
-                                _sharedPreferences.setInt('repetitions', value.toInt());
-
-                                setState(() {
-                                  repetitions = value.toInt();
-                                });
-                              },
-                              min: DefaultSettings.minRepetitions.toDouble(),
-                              max: DefaultSettings.maxRepetitions.toDouble(),
-                              divisions: DefaultSettings.maxRepetitions - DefaultSettings.minRepetitions,
-                              label: repetitions.toString(),
-                            ),
-                            Text(DefaultSettings.maxRepetitions.toString()),
-                          ],
+                        SliderSettings(
+                          settingName: localizations.amountOfRepetitions,
+                          minValue: DefaultSettings.minRepetitions,
+                          maxValue: DefaultSettings.maxRepetitions,
+                          standardValue: _sharedPreferences.getInt('repetitions') ?? DefaultSettings.repetitions,
+                          sharedPreferences: _sharedPreferences
                         )
                       ]
                     ),
@@ -183,39 +166,6 @@ class SettingsPageState extends State<SettingsPage> {
       _longBreakTimerController.text = longBreakTime.toString();
       _shortBreakTimerController.text = shortBreakTime.toString();
     });
-  }
-
-  Widget textInputSetting({
-    required String text,
-    required double textFieldWidth,
-    required ValueChanged<String> onSave,
-    required TextEditingController controller,
-    required int maxInputLength,
-    required FocusNode focusNode
-  }) {
-    return Row(
-      children: <Widget>[
-        Text(text),
-        const Spacer(),
-        SizedBox(
-          width: textFieldWidth,
-          child: TextField(
-            onSubmitted: onSave,
-            controller: controller,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: SpacingTheme.roundedRectangleBorderRadius,
-              ),
-              isDense: true,
-            ),
-            inputFormatters: <TextInputFormatter>[
-              LengthLimitingTextInputFormatter(maxInputLength),
-            ],
-            focusNode: focusNode,
-          ),
-        ),
-      ],
-    );
   }
 
   Future<void> _updateSharedPreferences(String setting, String value) async {
