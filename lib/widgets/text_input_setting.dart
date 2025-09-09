@@ -65,6 +65,23 @@ class _TextInputSettingState extends State<TextInputSetting> {
             ),
             inputFormatters: <TextInputFormatter>[
               LengthLimitingTextInputFormatter(widget.maxInputLength),
+              TextInputFormatter.withFunction((TextEditingValue oldValue, TextEditingValue newValue) {
+                const List<String> numbers = <String>['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+                final int? parsedNewValue = int.tryParse(newValue.text);
+
+                if (parsedNewValue == null && newValue.text.isNotEmpty || parsedNewValue == 0) {
+                  return oldValue;
+                }
+
+                for (int i = 0; i < newValue.text.length; i++) {
+                  if (!numbers.contains(newValue.text[i])) {
+                    return oldValue;
+                  }
+                }
+
+                return newValue;
+              })
             ],
             focusNode: focusNode,
             controller: controller,
