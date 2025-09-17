@@ -1,13 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:taskodoro/l10n/app_localizations.dart';
 import 'package:taskodoro/managers/priority_manager.dart';
 import 'package:taskodoro/models/priority.dart';
 import 'package:taskodoro/models/task.dart';
 import 'package:taskodoro/themes/spacing_theme.dart';
 import 'package:taskodoro/utils/database_service.dart';
+import 'package:taskodoro/widgets/task_form_body.dart';
+import 'package:taskodoro/widgets/task_name_field.dart';
 
 class CardTask extends StatefulWidget {
   const CardTask(this.task,
@@ -29,6 +30,9 @@ class _CardTaskState extends State<CardTask> {
   late String priority;
   late VoidCallback deleteTask;
   List<Priority> priorities = <Priority>[];
+
+  Timer? debounce;
+  final int debounceTimeMs = 250;
 
   DatabaseService databaseService = DatabaseService();
 
@@ -63,8 +67,6 @@ class _CardTaskState extends State<CardTask> {
 
   @override
   Widget build(BuildContext context) {
-    final PriorityManager priorityService = PriorityManager();
-
     const double margin = SpacingTheme.margin;
     const double gap = SpacingTheme.gap;
 
@@ -82,16 +84,11 @@ class _CardTaskState extends State<CardTask> {
         ),
     ];
 
-    final FocusNode priorityButtonFocusNode = FocusNode(debugLabel: 'Priority Menu Button');
     final AppLocalizations? localizations = AppLocalizations.of(context);
-    final String locale = Localizations
-        .localeOf(context)
-        .languageCode;
+    final String locale = Localizations.localeOf(context).languageCode;
     taskNameController.text = task.name;
     taskDescriptionController.text = task.description ?? '';
 
-    Timer? debounce;
-    const int debounceTimeMs = 250;
 
     return Card.filled(
       color: Theme.of(context).colorScheme.surfaceContainer,
@@ -115,23 +112,11 @@ class _CardTaskState extends State<CardTask> {
               ),
               const SizedBox(width: SpacingTheme.smallGap),
               Expanded(
-                child: TextField(
-                  decoration: InputDecoration(
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
-                    hintText: localizations?.name,
-                  ),
-                  style: Theme.of(context).textTheme.titleMedium,
-                  controller: taskNameController,
-                  onChanged: (String value) {
-                    task.name = value;
-
-                    debounce?.cancel();
-                    debounce = Timer(const Duration(milliseconds: debounceTimeMs), () {
-                      _updateTask(task);
-                    });
-                  },
-                ),
+                child: TaskNameField(
+                  onChanged: onTaskNameChange,
+                  localizations: localizations!,
+                  taskName: task.name,
+                )
               ),
               const SizedBox(width: gap,),
               TextButton.icon(
@@ -148,136 +133,72 @@ class _CardTaskState extends State<CardTask> {
             ],
           ),
           const SizedBox(height: margin,),
-          Row(
-            children: <Widget>[
-              const SizedBox(width: margin),
-              OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: SpacingTheme.roundedRectangleBorderRadius,
-                  ),
-                  padding: SpacingTheme.outlinedButtonPadding,
-                ),
-                onPressed: () async {
-                  final DateTime? date = await showDatePicker(
-                    context: context,
-                    firstDate: DateTime(1970),
-                    lastDate: DateTime(2037, 12),
-                    initialDate: task.timeDue,
-                  );
-
-                  if (date == null) {
-                    return;
-                  }
-
-                  task.timeDue = date;
-                  widget.selectTaskDate(task);
-                },
-                label: Row(
-                  children: <Widget>[
-                    Text(
-                      task.timeDue == null
-                          ? localizations.chooseDate
-                          : DateFormat('dd.MM.yyyy', locale).format(task.timeDue!),
-                      // TODO: Make format configurable
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    const SizedBox(width: gap,),
-                    IconButton(
-                      onPressed: () {
-                        task.timeDue = null;
-
-                        widget.selectTaskDate(task);
-                      },
-                      icon: const Icon(Icons.close),
-                      padding: EdgeInsets.zero,
-                      constraints: SpacingTheme.smallIconButtonConstraints,
-                    ),
-                  ],
-                ),
-                icon: const Icon(Icons.calendar_month_outlined),
-              ),
-              const SizedBox(width: 10),
-              MenuAnchor(
-                childFocusNode: priorityButtonFocusNode,
-                menuChildren: priorities,
-                builder: (BuildContext context, MenuController controller, Widget? child) {
-                  return SizedBox(
-                    child: OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: SpacingTheme.roundedRectangleBorderRadius,
-                        ),
-                        padding: SpacingTheme.outlinedButtonPadding,
-                      ),
-                      onPressed: () {
-                        if (controller.isOpen) {
-                          controller.close();
-                        } else {
-                          controller.open();
-                        }
-                      },
-                      icon: const Icon(Icons.flag_outlined),
-                      label: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            priority,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          const SizedBox(width: margin,),
-                          IconButton(
-                            onPressed: () {
-                              setState(() {
-                                task.priority = priorityService.getDefaultPriority();
-                                priority = task.priority.toString();
-
-                                _updateTask(task);
-                              });
-                            },
-                            icon: const Icon(Icons.close),
-                            padding: SpacingTheme.smallIconButtonPadding,
-                            constraints: SpacingTheme.smallIconButtonConstraints,
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-          const SizedBox(height: margin,),
-          Row(
-            children: <Widget>[
-              const SizedBox(width: margin),
-              Expanded(
-                child: TextField(
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(borderRadius: SpacingTheme.roundedRectangleBorderRadius),
-                    isDense: true,
-                    labelText: localizations.description,
-                  ),
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  controller: taskDescriptionController,
-                  onChanged: (String value) {
-                    task.description = value;
-
-                    debounce?.cancel();
-                    debounce = Timer(const Duration(milliseconds: debounceTimeMs), () {
-                      _updateTask(task);
-                    });
-                  },
-                ),
-              ),
-              const SizedBox(width: margin),
-            ],
+          TaskFormBody(
+            onDueDatePressed: onDueDatePressed,
+            onClearDueDate: onClearDueDate,
+            localizations: localizations,
+            locale: locale,
+            priorities: priorities,
+            onSetPriority: onSetPriority,
+            onChangedDescription: onChangedDescription,
+            priority: priority,
+            taskTimeDue: task.timeDue,
+            description: task.description,
           ),
           const SizedBox(height: margin,),
         ],
       ),
     );
+  }
+
+  void onTaskNameChange(String value) {
+    task.name = value;
+
+    debounce?.cancel();
+    debounce = Timer(Duration(milliseconds: debounceTimeMs), () {
+      _updateTask(task);
+    });
+  }
+
+  Future<void> onDueDatePressed() async {
+    final DateTime? date = await showDatePicker(
+      context: context,
+      firstDate: DateTime(1970),
+      lastDate: DateTime(2037, 12),
+      initialDate: task.timeDue ?? DateTime.now(),
+    );
+
+    if (date == null) {
+      return;
+    }
+
+    task.timeDue = date;
+    widget.selectTaskDate(task);
+  }
+
+  void onClearDueDate() {
+    task.timeDue = null;
+
+    widget.selectTaskDate(task);
+  }
+
+  void onSetPriority() {
+    final PriorityManager priorityManager = PriorityManager();
+
+    setState(() {
+      task.priority = priorityManager.getDefaultPriority();
+      priority = task.priority.toString();
+
+      _updateTask(task);
+    });
+  }
+
+  void onChangedDescription(String value) {
+    task.description = value;
+
+    debounce?.cancel();
+    debounce = Timer(Duration(milliseconds: debounceTimeMs), () {
+      _updateTask(task);
+    });
   }
 }
