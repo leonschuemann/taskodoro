@@ -30,103 +30,103 @@ class TaskFormBody extends StatelessWidget {
     final PriorityManager priorityManager = PriorityManager();
     taskDescriptionController.text = description ?? '';
 
-    return Column(
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            const SizedBox(width: SpacingTheme.margin),
-            OutlinedButton.icon(
-              style: OutlinedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: SpacingTheme.roundedRectangleBorderRadius,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: SpacingTheme.margin),
+      child: Column(
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: SpacingTheme.roundedRectangleBorderRadius,
+                  ),
+                  padding: SpacingTheme.outlinedButtonPadding,
                 ),
-                padding: SpacingTheme.outlinedButtonPadding,
+                onPressed: onDueDatePressed,
+                label: Row(
+                  children: <Widget>[
+                    Text(
+                      taskTimeDue == null
+                          ? localizations.chooseDate
+                          : DateFormat('dd.MM.yyyy', locale).format(taskTimeDue!),
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(width: SpacingTheme.gap,),
+                    IconButton(
+                      onPressed: onClearDueDate,
+                      icon: const Icon(Icons.close),
+                      padding: EdgeInsets.zero,
+                      constraints: SpacingTheme.smallIconButtonConstraints,
+                    ),
+                  ],
+                ),
+                icon: const Icon(Icons.calendar_month_outlined),
               ),
-              onPressed: onDueDatePressed,
-              label: Row(
-                children: <Widget>[
-                  Text(
-                    taskTimeDue == null
-                        ? localizations.chooseDate
-                        : DateFormat('dd.MM.yyyy', locale).format(taskTimeDue!),
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  const SizedBox(width: SpacingTheme.gap,),
-                  IconButton(
-                    onPressed: onClearDueDate,
-                    icon: const Icon(Icons.close),
-                    padding: EdgeInsets.zero,
-                    constraints: SpacingTheme.smallIconButtonConstraints,
-                  ),
-                ],
-              ),
-              icon: const Icon(Icons.calendar_month_outlined),
-            ),
-            const SizedBox(width: 10),
-            MenuAnchor(
-              childFocusNode: priorityButtonFocusNode,
-              menuChildren: priorities,
-              builder: (BuildContext context, MenuController controller, Widget? child) {
-                return SizedBox(
-                  child: OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: SpacingTheme.roundedRectangleBorderRadius,
+              const SizedBox(width: 10),
+              MenuAnchor(
+                childFocusNode: priorityButtonFocusNode,
+                menuChildren: priorities,
+                builder: (BuildContext context, MenuController controller, Widget? child) {
+                  return SizedBox(
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: SpacingTheme.roundedRectangleBorderRadius,
+                        ),
+                        padding: SpacingTheme.outlinedButtonPadding,
                       ),
-                      padding: SpacingTheme.outlinedButtonPadding,
+                      onPressed: () {
+                        if (controller.isOpen) {
+                          controller.close();
+                        } else {
+                          controller.open();
+                        }
+                      },
+                      icon: const Icon(Icons.flag_outlined),
+                      label: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            priority ?? priorityManager.choosePriority.toString(),
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          const SizedBox(width: SpacingTheme.margin,),
+                          IconButton(
+                            onPressed: onClearPriority,
+                            icon: const Icon(Icons.close),
+                            padding: SpacingTheme.smallIconButtonPadding,
+                            constraints: SpacingTheme.smallIconButtonConstraints,
+                          ),
+                        ],
+                      ),
                     ),
-                    onPressed: () {
-                      if (controller.isOpen) {
-                        controller.close();
-                      } else {
-                        controller.open();
-                      }
-                    },
-                    icon: const Icon(Icons.flag_outlined),
-                    label: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(
-                          priority ?? priorityManager.choosePriority.toString(),
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        const SizedBox(width: SpacingTheme.margin,),
-                        IconButton(
-                          onPressed: onClearPriority,
-                          icon: const Icon(Icons.close),
-                          padding: SpacingTheme.smallIconButtonPadding,
-                          constraints: SpacingTheme.smallIconButtonConstraints,
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-        const SizedBox(height: SpacingTheme.margin,),
-        Row(
-          children: <Widget>[
-            const SizedBox(width: SpacingTheme.margin),
-            Expanded(
-              child: TextField(
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(borderRadius: SpacingTheme.roundedRectangleBorderRadius),
-                  isDense: true,
-                  labelText: localizations.description,
-                ),
-                style: Theme.of(context).textTheme.bodyMedium,
-                controller: taskDescriptionController,
-                onChanged: onChangedDescription,
+                  );
+                },
               ),
-            ),
-            const SizedBox(width: SpacingTheme.margin),
-          ],
-        ),
-      ],
+            ],
+          ),
+          const SizedBox(height: SpacingTheme.margin,),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: TextField(
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(borderRadius: SpacingTheme.roundedRectangleBorderRadius),
+                    isDense: true,
+                    labelText: localizations.description,
+                  ),
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  controller: taskDescriptionController,
+                  onChanged: onChangedDescription,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

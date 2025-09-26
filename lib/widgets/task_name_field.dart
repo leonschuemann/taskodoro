@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taskodoro/l10n/app_localizations.dart';
+import 'package:taskodoro/themes/spacing_theme.dart';
 
 class TaskNameField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
@@ -13,15 +14,18 @@ class TaskNameField extends StatelessWidget {
   Widget build(BuildContext context) {
     taskNameController.text = taskName ?? '';
 
-    return TextField(
-      decoration: InputDecoration(
-        isDense: true,
-        contentPadding: EdgeInsets.zero,
-        hintText: localizations.name,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: SpacingTheme.margin),
+      child: TextField(
+        decoration: InputDecoration(
+          isDense: true,
+          contentPadding: EdgeInsets.zero,
+          hintText: localizations.name,
+        ),
+        style: Theme.of(context).textTheme.titleMedium,
+        controller: taskNameController,
+        onChanged: onChanged,
       ),
-      style: Theme.of(context).textTheme.titleMedium,
-      controller: taskNameController,
-      onChanged: onChanged,
     );
   }
 }

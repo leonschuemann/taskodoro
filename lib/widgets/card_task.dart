@@ -92,61 +92,59 @@ class _CardTaskState extends State<CardTask> {
 
     return Card.filled(
       color: Theme.of(context).colorScheme.surfaceContainer,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          const SizedBox(height: margin),
-          Row(
-            children: <Widget>[
-              const SizedBox(width: margin),
-              Center(
-                child: Checkbox(
-                  value: task.isDone,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      task.isDone = value!;
-                      _updateTask(task);
-                    });
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: SpacingTheme.margin),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                const SizedBox(width: margin),
+                Center(
+                  child: Checkbox(
+                    value: task.isDone,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        task.isDone = value!;
+                        _updateTask(task);
+                      });
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: TaskNameField(
+                    onChanged: onTaskNameChange,
+                    localizations: localizations!,
+                    taskName: task.name,
+                  )
+                ),
+                TextButton.icon(
+                  onPressed: () => <void>{
+                    deleteTask(),
                   },
+                  label: Text(
+                    localizations!.taskDelete,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  icon: const Icon(Icons.delete),
                 ),
-              ),
-              const SizedBox(width: SpacingTheme.smallGap),
-              Expanded(
-                child: TaskNameField(
-                  onChanged: onTaskNameChange,
-                  localizations: localizations!,
-                  taskName: task.name,
-                )
-              ),
-              const SizedBox(width: gap,),
-              TextButton.icon(
-                onPressed: () => <void>{
-                  deleteTask(),
-                },
-                label: Text(
-                  localizations!.taskDelete,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                icon: const Icon(Icons.delete),
-              ),
-              const SizedBox(width: margin,),
-            ],
-          ),
-          const SizedBox(height: margin,),
-          TaskFormBody(
-            onDueDatePressed: onDueDatePressed,
-            onClearDueDate: onClearDueDate,
-            localizations: localizations,
-            locale: locale,
-            priorities: priorities,
-            onClearPriority: onClearPriority,
-            onChangedDescription: onChangedDescription,
-            priority: priority,
-            taskTimeDue: task.timeDue,
-            description: task.description,
-          ),
-          const SizedBox(height: margin,),
-        ],
+              ],
+            ),
+            const SizedBox(height: margin,),
+            TaskFormBody(
+              onDueDatePressed: onDueDatePressed,
+              onClearDueDate: onClearDueDate,
+              localizations: localizations,
+              locale: locale,
+              priorities: priorities,
+              onClearPriority: onClearPriority,
+              onChangedDescription: onChangedDescription,
+              priority: priority,
+              taskTimeDue: task.timeDue,
+              description: task.description,
+            ),
+          ],
+        ),
       ),
     );
   }
