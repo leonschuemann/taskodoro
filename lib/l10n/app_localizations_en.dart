@@ -56,4 +56,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get amountOfRepetitions => 'Amount of Repetitions';
+
+  @override
+  String get addNewTask => 'Add new task';
+
+  @override
+  String get addTask => 'Add task';
 }

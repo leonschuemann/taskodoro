@@ -46,14 +46,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get pomodoroTimer => 'Pomodoro Timer';
 
   @override
-  String get focusTimer => 'Focus Timer';
+  String get focusTimer => 'Fokuszeit';
 
   @override
-  String get longBreakTimer => 'Langer Pausen-Timer';
+  String get longBreakTimer => 'Lange Pausenzeit';
 
   @override
-  String get shortBreakTimer => 'Kurzer Pausen-Timer';
+  String get shortBreakTimer => 'Kurze Pausenzeit';
 
   @override
   String get amountOfRepetitions => 'Anzahl der Wiederholungen';
+
+  @override
+  String get addNewTask => 'Neue Aufgabe hinzufügen';
+
+  @override
+  String get addTask => 'Aufgabe hinzufügen';
 }

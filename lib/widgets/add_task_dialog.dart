@@ -48,11 +48,11 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
     ];
 
     return AlertDialog(
-      title: Text('Add new task'),
+      title: Text(localizations.addNewTask),
       actions: <Widget>[
         TextButton(
           onPressed: addTask,
-          child: Text('Add task')
+          child: Text(localizations.addTask)
         )
       ],
       content: Column(

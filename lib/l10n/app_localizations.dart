@@ -190,6 +190,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Amount of Repetitions'**
   String get amountOfRepetitions;
+
+  /// No description provided for @addNewTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Add new task'**
+  String get addNewTask;
+
+  /// No description provided for @addTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Add task'**
+  String get addTask;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -14,5 +14,7 @@
   "focusTimer": "Focus Timer",
   "longBreakTimer": "Long Break Timer",
   "shortBreakTimer": "Short Break Timer",
-  "amountOfRepetitions": "Amount of Repetitions"
+  "amountOfRepetitions": "Amount of Repetitions",
+  "addNewTask": "Add new task",
+  "addTask": "Add task"
 }

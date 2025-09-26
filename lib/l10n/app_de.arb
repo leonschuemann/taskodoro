@@ -14,5 +14,7 @@
   "focusTimer": "Fokuszeit",
   "longBreakTimer": "Lange Pausenzeit",
   "shortBreakTimer": "Kurze Pausenzeit",
-  "amountOfRepetitions": "Anzahl der Wiederholungen"
+  "amountOfRepetitions": "Anzahl der Wiederholungen",
+  "addNewTask": "Neue Aufgabe hinzufügen",
+  "addTask": "Aufgabe hinzufügen"
 }
