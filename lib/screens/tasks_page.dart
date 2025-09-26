@@ -7,6 +7,7 @@ import 'package:taskodoro/screens/pomodoro_page.dart';
 import 'package:taskodoro/screens/settings_page.dart';
 import 'package:taskodoro/themes/spacing_theme.dart';
 import 'package:taskodoro/utils/database_service.dart';
+import 'package:taskodoro/widgets/add_task_dialog.dart';
 import 'package:taskodoro/widgets/card_task.dart';
 import 'package:taskodoro/widgets/date_divider.dart';
 import 'package:taskodoro/widgets/textfield_task_list.dart';
@@ -82,7 +83,7 @@ class _TasksPageState extends State<TasksPage> {
                 return;
               }
               
-              _addTask(taskName, selectedTaskListId);
+              _addTaskHelper(taskName, selectedTaskListId);
             },
           ),
         ),
@@ -117,28 +118,51 @@ class _TasksPageState extends State<TasksPage> {
 
   Widget body(AppLocalizations localizations, BuildContext context) {
     return Expanded(
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          if (constraints.maxWidth >= 1000) {
-            return Row(
-              children: <Widget>[
-                Expanded(
-                  child: taskListsView(localizations)
-                ),
-                const VerticalDivider(),
-                Expanded(
-                  flex: 4,
+      child: Stack(
+        children: <Widget>[
+          LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              if (constraints.maxWidth >= 1000) {
+                return Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: taskListsView(localizations)
+                    ),
+                    const VerticalDivider(),
+                    Expanded(
+                      flex: 4,
+                      child: tasksView(localizations),
+                    ),
+                  ],
+                );
+              } else {
+                return ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1000, minWidth: 400),
                   child: tasksView(localizations),
-                ),
-              ],
-            );
-          } else {
-            return ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1000, minWidth: 400),
-              child: tasksView(localizations),
-            );
-          }
-        },
+                );
+              }
+            },
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: FloatingActionButton.extended(
+                onPressed: () {
+                  showDialog<AddTaskDialog>(context: context, builder: (BuildContext context) {
+                    return AddTaskDialog(
+                      addTask: (Task task) async {
+                        await _addTask(task, selectedTaskListId);
+                      },
+                    );
+                  });
+                },
+                label: Text('Add Task'),
+                icon: const Icon(Icons.add),
+              ),
+            ),
+          ),
+        ]
       ),
     );
   }
@@ -226,11 +250,15 @@ class _TasksPageState extends State<TasksPage> {
     );
   }
 
-  Future<void> _addTask(String taskName, int taskListId) async {
+  Future<void> _addTaskHelper(String taskName, int taskListId) async {
     final Task task = Task(id: null, name: taskName, isDone: false, timeAdded: DateTime.now());
+    await _addTask(task, taskListId);
+    _newTaskController.clear();
+  }
+  
+  Future<void> _addTask(Task task, int taskListId) async {
     await _databaseService.insertTask(task, taskListId);
     await _loadTaskLists();
-    _newTaskController.clear();
   }
 
   Future<void> _loadTaskLists() async {
