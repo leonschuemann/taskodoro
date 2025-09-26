@@ -12,14 +12,18 @@ class TaskFormBody extends StatelessWidget {
   final String locale;
   final String? priority;
   final List<Widget> priorities;
-  final VoidCallback onSetPriority;
+  final VoidCallback onClearPriority;
   final ValueChanged<String> onChangedDescription;
   final String? description;
 
   final FocusNode priorityButtonFocusNode = FocusNode();
   final TextEditingController taskDescriptionController = TextEditingController();
 
-  TaskFormBody({super.key, required this.onDueDatePressed, required this.onClearDueDate, required this.localizations, required this.locale, required this.priorities, required this.onSetPriority, required this.onChangedDescription, this.priority, this.taskTimeDue, this.description,});
+  TaskFormBody({super.key, required this.onDueDatePressed, required this.onClearDueDate,
+    required this.localizations, required this.locale, required this.priorities,
+    required this.onClearPriority, required this.onChangedDescription, this.priority,
+    this.taskTimeDue, this.description,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +92,7 @@ class TaskFormBody extends StatelessWidget {
                         ),
                         const SizedBox(width: SpacingTheme.margin,),
                         IconButton(
-                          onPressed: onSetPriority,
+                          onPressed: onClearPriority,
                           icon: const Icon(Icons.close),
                           padding: SpacingTheme.smallIconButtonPadding,
                           constraints: SpacingTheme.smallIconButtonConstraints,
@@ -125,5 +129,4 @@ class TaskFormBody extends StatelessWidget {
       ],
     );
   }
-  
 }

@@ -139,7 +139,7 @@ class _CardTaskState extends State<CardTask> {
             localizations: localizations,
             locale: locale,
             priorities: priorities,
-            onSetPriority: onSetPriority,
+            onClearPriority: onClearPriority,
             onChangedDescription: onChangedDescription,
             priority: priority,
             taskTimeDue: task.timeDue,
@@ -182,7 +182,7 @@ class _CardTaskState extends State<CardTask> {
     widget.selectTaskDate(task);
   }
 
-  void onSetPriority() {
+  void onClearPriority() {
     final PriorityManager priorityManager = PriorityManager();
 
     setState(() {
