@@ -205,7 +205,9 @@ class _TasksPageState extends State<TasksPage> {
             taskList.isNameEditable = true;
           });
         },
-        deleteTaskList: () {  },
+        deleteTaskList: () async {
+          await deleteTaskList(taskList);
+        },
         isEditing: taskList.isNameEditable,
         onEditingComplete: (String newName) async {
           taskList.name = newName;
@@ -330,6 +332,11 @@ class _TasksPageState extends State<TasksPage> {
 
   Future<void> _updateTaskList(TaskList taskList) async {
     await _databaseService.updateTaskList(taskList);
+    await _loadTaskLists();
+  }
+
+  Future<void> deleteTaskList(TaskList taskList) async {
+    await _databaseService.deleteTaskList(taskList);
     await _loadTaskLists();
   }
 
