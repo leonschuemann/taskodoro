@@ -207,6 +207,10 @@ class _TasksPageState extends State<TasksPage> {
         },
         deleteTaskList: () async {
           await deleteTaskList(taskList);
+
+          if (taskList.id == selectedTaskListId) {
+            selectTaskList(taskLists[0]);
+          }
         },
         isEditing: taskList.isNameEditable,
         onEditingComplete: (String newName) async {
