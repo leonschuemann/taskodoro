@@ -23,9 +23,6 @@ class CardTask extends StatefulWidget {
 }
 
 class _CardTaskState extends State<CardTask> {
-  final TextEditingController taskNameController = TextEditingController();
-  final TextEditingController taskDescriptionController = TextEditingController();
-
   late Task task;
   late String priority;
   late VoidCallback deleteTask;
@@ -45,13 +42,6 @@ class _CardTaskState extends State<CardTask> {
     _loadPriorities();
   }
 
-  @override
-  void dispose() {
-    taskNameController.dispose();
-    taskDescriptionController.dispose();
-    super.dispose();
-  }
-
   Future<void> _loadPriorities() async {
     final PriorityManager priorityService = PriorityManager();
     final List<Priority> priorities = await priorityService.getPriorities();
@@ -68,7 +58,6 @@ class _CardTaskState extends State<CardTask> {
   @override
   Widget build(BuildContext context) {
     const double margin = SpacingTheme.margin;
-    const double gap = SpacingTheme.gap;
 
     final List<MenuItemButton> priorities = <MenuItemButton>[
       for (final Priority currentPriority in this.priorities)
@@ -86,9 +75,6 @@ class _CardTaskState extends State<CardTask> {
 
     final AppLocalizations? localizations = AppLocalizations.of(context);
     final String locale = Localizations.localeOf(context).languageCode;
-    taskNameController.text = task.name;
-    taskDescriptionController.text = task.description ?? '';
-
 
     return Card.filled(
       color: Theme.of(context).colorScheme.surfaceContainer,
@@ -123,7 +109,7 @@ class _CardTaskState extends State<CardTask> {
                     deleteTask(),
                   },
                   label: Text(
-                    localizations!.taskDelete,
+                    localizations.taskDelete,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   icon: const Icon(Icons.delete),
