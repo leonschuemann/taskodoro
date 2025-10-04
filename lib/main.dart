@@ -7,8 +7,8 @@ import 'package:taskodoro/themes/text_theme.dart';
 import 'package:taskodoro/themes/theme.dart';
 
 void main() async {
-  final SharedPreferences _sharedPreferences = await SharedPreferences.getInstance();
-  runApp(MyApp(sharedPreferences: _sharedPreferences));
+  final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  runApp(MyApp(sharedPreferences: sharedPreferences));
 }
 
 class MyApp extends StatelessWidget {

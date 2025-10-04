@@ -112,7 +112,7 @@ class SettingsPageState extends State<SettingsPage> {
                           maxValue: DefaultSettings.maxRepetitions,
                           standardValue: _sharedPreferences.getInt('repetitions') ?? DefaultSettings.repetitions,
                           sharedPreferences: _sharedPreferences
-                        )
+                        ),
                       ]
                     ),
                   ),

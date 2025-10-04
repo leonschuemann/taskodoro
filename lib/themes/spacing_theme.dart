@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class SpacingTheme {
   static const double margin = 14.0;
@@ -13,6 +13,6 @@ class SpacingTheme {
     minWidth: smallIconSize,
   );
   static const EdgeInsets smallIconButtonPadding = EdgeInsets.zero;
-  static EdgeInsets outlinedButtonPadding = const EdgeInsets.all(14.0);
+  static const EdgeInsets outlinedButtonPadding = EdgeInsets.all(14.0);
   static BorderRadius roundedRectangleBorderRadius = BorderRadius.circular(10.0);
 }

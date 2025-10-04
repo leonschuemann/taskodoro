@@ -65,7 +65,9 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
             TaskNameField(
               taskName: taskName,
               localizations: localizations,
-              onChanged: onChangedTaskName,
+              onChanged: (String name) {
+                taskName = name;
+              },
             ),
             const SizedBox(height: SpacingTheme.margin,),
             TaskFormBody(
@@ -75,7 +77,9 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
               locale: locale,
               priorities: priorities,
               onClearPriority: onClearPriority,
-              onChangedDescription: onChangedDescription,
+              onChangedDescription: (String description) {
+                this.description = description;
+              },
               priority: priority?.toString(),
               taskTimeDue: pickedDate,
               description: description,
@@ -88,68 +92,60 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
     );
   }
 
-  void onChangedTaskName(String name) {
-    taskName = name;
+  Future<void> _loadPriorities() async {
+    final PriorityManager priorityService = PriorityManager();
+    final List<Priority> priorities = await priorityService.getPriorities();
+
+    setState(() {
+      this.priorities = priorities;
+    });
   }
 
-    Future<void> _loadPriorities() async {
-      final PriorityManager priorityService = PriorityManager();
-      final List<Priority> priorities = await priorityService.getPriorities();
+  Future<void> onDueDatePressed() async {
+    final DateTime? date = await showDatePicker(
+      context: context,
+      firstDate: DateTime(1970),
+      lastDate: DateTime(2037, 12),
+      initialDate: pickedDate ?? DateTime.now(),
+    );
 
-      setState(() {
-        this.priorities = priorities;
-      });
+    if (date == null) {
+      return;
     }
 
-    Future<void> onDueDatePressed() async {
-      final DateTime? date = await showDatePicker(
-        context: context,
-        firstDate: DateTime(1970),
-        lastDate: DateTime(2037, 12),
-        initialDate: pickedDate ?? DateTime.now(),
-      );
+    setState(() {
+      pickedDate = date;
+    });
+  }
 
-      if (date == null) {
-        return;
-      }
+  void addTask() {
+    final Task task = Task(
+      id: null,
+      name: taskName ?? '',
+      isDone: false,
+      timeAdded: DateTime.now(),
+    );
+    task.description = description;
+    task.timeDue = pickedDate;
 
-      setState(() {
-        pickedDate = date;
-      });
+    if (priority != null) {
+      task.priority = priority!;
     }
 
-    void addTask() {
-      final Task task = Task(
-        id: null,
-        name: taskName ?? '',
-        isDone: false,
-        timeAdded: DateTime.now(),
-      );
-      task.description = description;
-      task.timeDue = pickedDate;
+    widget.addTask(task);
 
-      if (priority != null) {
-        task.priority = priority!;
-      }
+    Navigator.of(context).pop();
+  }
 
-      widget.addTask(task);
+  void onClearDueDate() {
+    setState(() {
+      pickedDate = null;
+    });
+  }
 
-      Navigator.of(context).pop();
-    }
-
-    void onClearDueDate() {
-      setState(() {
-        pickedDate = null;
-      });
-    }
-
-    void onClearPriority() {
-      setState(() {
-        priority = null;
-      });
-    }
-
-  void onChangedDescription(String description) {
-    this.description = description;
+  void onClearPriority() {
+    setState(() {
+      priority = null;
+    });
   }
 }
