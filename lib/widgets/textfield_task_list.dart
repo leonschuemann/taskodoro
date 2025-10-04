@@ -124,7 +124,8 @@ class _TextFieldTaskListState extends State<TextFieldTaskList> {
         ),
         PopupMenuItem(
           value: 'delete',
-          child: Text('delete')
+          child: Text('delete'),
+          enabled: widget.taskList.id != 0,
         ),
       ]
     );
