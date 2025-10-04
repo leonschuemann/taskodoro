@@ -42,19 +42,6 @@ class _CardTaskState extends State<CardTask> {
     _loadPriorities();
   }
 
-  Future<void> _loadPriorities() async {
-    final PriorityManager priorityService = PriorityManager();
-    final List<Priority> priorities = await priorityService.getPriorities();
-
-    setState(() {
-      this.priorities = priorities;
-    });
-  }
-
-  Future<void> _updateTask(Task task) async {
-    await databaseService.updateTask(task);
-  }
-
   @override
   Widget build(BuildContext context) {
     const double margin = SpacingTheme.margin;
@@ -134,6 +121,19 @@ class _CardTaskState extends State<CardTask> {
         ),
       ),
     );
+  }
+
+  Future<void> _loadPriorities() async {
+    final PriorityManager priorityService = PriorityManager();
+    final List<Priority> priorities = await priorityService.getPriorities();
+
+    setState(() {
+      this.priorities = priorities;
+    });
+  }
+
+  Future<void> _updateTask(Task task) async {
+    await databaseService.updateTask(task);
   }
 
   void onTaskNameChange(String value) {
