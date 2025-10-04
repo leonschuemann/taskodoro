@@ -157,7 +157,7 @@ class _TasksPageState extends State<TasksPage> {
                     );
                   });
                 },
-                label: Text('Add Task'),
+                label: Text(localizations.addTask),
                 icon: const Icon(Icons.add),
               ),
             ),
