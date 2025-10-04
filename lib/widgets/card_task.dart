@@ -128,6 +128,7 @@ class _CardTaskState extends State<CardTask> {
               priority: priority,
               taskTimeDue: task.timeDue,
               description: task.description,
+              shouldExpandPriorityMenu: false,
             ),
           ],
         ),

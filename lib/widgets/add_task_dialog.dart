@@ -55,30 +55,35 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
           child: Text(localizations.addTask)
         )
       ],
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          const SizedBox(height: SpacingTheme.margin),
-          TaskNameField(
-            taskName: taskName,
-            localizations: localizations,
-            onChanged: onChangedTaskName,
-          ),
-          const SizedBox(height: SpacingTheme.margin,),
-          TaskFormBody(
-            onDueDatePressed: onDueDatePressed,
-            onClearDueDate: onClearDueDate,
-            localizations: localizations,
-            locale: locale,
-            priorities: priorities,
-            onClearPriority: onClearPriority,
-            onChangedDescription: onChangedDescription,
-            priority: priority?.toString(),
-            taskTimeDue: pickedDate,
-            description: description,
-          ),
-          const SizedBox(height: SpacingTheme.margin,),
-        ],
+      content: SizedBox(
+        width: 405,
+        height: 155,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const SizedBox(height: SpacingTheme.margin),
+            TaskNameField(
+              taskName: taskName,
+              localizations: localizations,
+              onChanged: onChangedTaskName,
+            ),
+            const SizedBox(height: SpacingTheme.margin,),
+            TaskFormBody(
+              onDueDatePressed: onDueDatePressed,
+              onClearDueDate: onClearDueDate,
+              localizations: localizations,
+              locale: locale,
+              priorities: priorities,
+              onClearPriority: onClearPriority,
+              onChangedDescription: onChangedDescription,
+              priority: priority?.toString(),
+              taskTimeDue: pickedDate,
+              description: description,
+              shouldExpandPriorityMenu: true,
+            ),
+            const SizedBox(height: SpacingTheme.margin,),
+          ],
+        ),
       ),
     );
   }

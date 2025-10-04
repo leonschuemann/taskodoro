@@ -15,6 +15,7 @@ class TaskFormBody extends StatelessWidget {
   final VoidCallback onClearPriority;
   final ValueChanged<String> onChangedDescription;
   final String? description;
+  final bool shouldExpandPriorityMenu;
 
   final FocusNode priorityButtonFocusNode = FocusNode();
   final TextEditingController taskDescriptionController = TextEditingController();
@@ -22,7 +23,7 @@ class TaskFormBody extends StatelessWidget {
   TaskFormBody({super.key, required this.onDueDatePressed, required this.onClearDueDate,
     required this.localizations, required this.locale, required this.priorities,
     required this.onClearPriority, required this.onChangedDescription, this.priority,
-    this.taskTimeDue, this.description,
+    this.taskTimeDue, this.description, required this.shouldExpandPriorityMenu,
   });
 
   @override
@@ -64,46 +65,9 @@ class TaskFormBody extends StatelessWidget {
                 icon: const Icon(Icons.calendar_month_outlined),
               ),
               const SizedBox(width: 10),
-              MenuAnchor(
-                childFocusNode: priorityButtonFocusNode,
-                menuChildren: priorities,
-                builder: (BuildContext context, MenuController controller, Widget? child) {
-                  return SizedBox(
-                    child: OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: SpacingTheme.roundedRectangleBorderRadius,
-                        ),
-                        padding: SpacingTheme.outlinedButtonPadding,
-                      ),
-                      onPressed: () {
-                        if (controller.isOpen) {
-                          controller.close();
-                        } else {
-                          controller.open();
-                        }
-                      },
-                      icon: const Icon(Icons.flag_outlined),
-                      label: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            priority ?? priorityManager.choosePriority.toString(),
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          const SizedBox(width: SpacingTheme.margin,),
-                          IconButton(
-                            onPressed: onClearPriority,
-                            icon: const Icon(Icons.close),
-                            padding: SpacingTheme.smallIconButtonPadding,
-                            constraints: SpacingTheme.smallIconButtonConstraints,
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
+
+              if (shouldExpandPriorityMenu) Expanded(child: getPriorityMenuAnchor(priorityManager))
+              else Flexible(child: getPriorityMenuAnchor(priorityManager)),
             ],
           ),
           const SizedBox(height: SpacingTheme.margin,),
@@ -127,6 +91,54 @@ class TaskFormBody extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget getPriorityMenuAnchor(PriorityManager priorityManager) {
+    return MenuAnchor(
+      childFocusNode: priorityButtonFocusNode,
+      menuChildren: priorities,
+      builder: (BuildContext context, MenuController controller, Widget? child) {
+        return SizedBox(
+          child: OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: SpacingTheme.roundedRectangleBorderRadius,
+              ),
+              padding: SpacingTheme.outlinedButtonPadding,
+            ),
+            onPressed: () {
+              if (controller.isOpen) {
+                controller.close();
+              } else {
+                controller.open();
+              }
+            },
+            icon: const Icon(Icons.flag_outlined),
+            label: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: shouldExpandPriorityMenu ? MainAxisSize.max : MainAxisSize.min,
+              children: <Widget>[
+                Flexible(
+                  child: Text(
+                    priority ?? priorityManager.choosePriority.toString(),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
+                const SizedBox(width: SpacingTheme.margin,),
+                IconButton(
+                  onPressed: onClearPriority,
+                  icon: const Icon(Icons.close),
+                  padding: SpacingTheme.smallIconButtonPadding,
+                  constraints: SpacingTheme.smallIconButtonConstraints,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
