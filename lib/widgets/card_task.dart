@@ -11,10 +11,10 @@ import 'package:taskodoro/widgets/task_form_body.dart';
 import 'package:taskodoro/widgets/task_name_field.dart';
 
 class CardTask extends StatefulWidget {
-  const CardTask(this.task,
-      {required this.priority, required this.deleteTask, required this.selectTaskDate, super.key});
+  const CardTask(this.task, {required this.deleteTask,
+    required this.selectTaskDate, super.key});
+
   final Task task;
-  final String priority;
   final VoidCallback deleteTask;
   final ValueChanged<Task> selectTaskDate;
 
@@ -23,9 +23,6 @@ class CardTask extends StatefulWidget {
 }
 
 class _CardTaskState extends State<CardTask> {
-  late Task task;
-  late String priority;
-  late VoidCallback deleteTask;
   List<Priority> priorities = <Priority>[];
 
   Timer? debounce;
@@ -36,9 +33,6 @@ class _CardTaskState extends State<CardTask> {
   @override
   void initState() {
     super.initState();
-    task = widget.task;
-    priority = widget.priority;
-    deleteTask = widget.deleteTask;
     _loadPriorities();
   }
 
@@ -52,9 +46,8 @@ class _CardTaskState extends State<CardTask> {
           child: Text(currentPriority.toString()),
           onPressed: () => <void>{
             setState(() {
-              priority = currentPriority.toString();
-              task.priority = currentPriority;
-              _updateTask(task);
+              widget.task.priority = currentPriority;
+              _updateTask(widget.task);
             }),
           },
         ),
@@ -75,11 +68,11 @@ class _CardTaskState extends State<CardTask> {
                 const SizedBox(width: margin),
                 Center(
                   child: Checkbox(
-                    value: task.isDone,
+                    value: widget.task.isDone,
                     onChanged: (bool? value) {
                       setState(() {
-                        task.isDone = value!;
-                        _updateTask(task);
+                        widget.task.isDone = value!;
+                        _updateTask(widget.task);
                       });
                     },
                   ),
@@ -88,12 +81,12 @@ class _CardTaskState extends State<CardTask> {
                   child: TaskNameField(
                     onChanged: onTaskNameChange,
                     localizations: localizations!,
-                    taskName: task.name,
+                    taskName: widget.task.name,
                   )
                 ),
                 TextButton.icon(
                   onPressed: () => <void>{
-                    deleteTask(),
+                    widget.deleteTask(),
                   },
                   label: Text(
                     localizations.taskDelete,
@@ -112,9 +105,9 @@ class _CardTaskState extends State<CardTask> {
               priorities: priorities,
               onClearPriority: onClearPriority,
               onChangedDescription: onChangedDescription,
-              priority: priority,
-              taskTimeDue: task.timeDue,
-              description: task.description,
+              priority: widget.task.priority.toString(),
+              taskTimeDue: widget.task.timeDue,
+              description: widget.task.description,
               shouldExpandPriorityMenu: false,
             ),
           ],
@@ -137,11 +130,11 @@ class _CardTaskState extends State<CardTask> {
   }
 
   void onTaskNameChange(String value) {
-    task.name = value;
+    widget.task.name = value;
 
     debounce?.cancel();
-    debounce = Timer(Duration(milliseconds: debounceTimeMs), () {
-      _updateTask(task);
+    debounce = Timer(Duration(milliseconds: debounceTimeMs), () async {
+      await _updateTask(widget.task);
     });
   }
 
@@ -150,40 +143,39 @@ class _CardTaskState extends State<CardTask> {
       context: context,
       firstDate: DateTime(1970),
       lastDate: DateTime(2037, 12),
-      initialDate: task.timeDue ?? DateTime.now(),
+      initialDate: widget.task.timeDue ?? DateTime.now(),
     );
 
     if (date == null) {
       return;
     }
 
-    task.timeDue = date;
-    widget.selectTaskDate(task);
+    widget.task.timeDue = date;
+    widget.selectTaskDate(widget.task);
   }
 
   void onClearDueDate() {
-    task.timeDue = null;
+    widget.task.timeDue = null;
 
-    widget.selectTaskDate(task);
+    widget.selectTaskDate(widget.task);
   }
 
   void onClearPriority() {
     final PriorityManager priorityManager = PriorityManager();
 
     setState(() {
-      task.priority = priorityManager.getDefaultPriority();
-      priority = task.priority.toString();
+      widget.task.priority = priorityManager.getDefaultPriority();
 
-      _updateTask(task);
+      _updateTask(widget.task);
     });
   }
 
   void onChangedDescription(String value) {
-    task.description = value;
+    widget.task.description = value;
 
     debounce?.cancel();
-    debounce = Timer(Duration(milliseconds: debounceTimeMs), () {
-      _updateTask(task);
+    debounce = Timer(Duration(milliseconds: debounceTimeMs), () async {
+      await _updateTask(widget.task);
     });
   }
 }

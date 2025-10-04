@@ -182,7 +182,6 @@ class _TasksPageState extends State<TasksPage> {
                 return CardTask(
                   key: ValueKey<int>(task.id!),
                   task,
-                  priority: task.priority.toString(),
                   deleteTask: () => deleteTask(task.id!),
                   selectTaskDate: selectTaskDate,
                 );
