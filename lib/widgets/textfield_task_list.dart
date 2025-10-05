@@ -120,7 +120,8 @@ class _TextFieldTaskListState extends State<TextFieldTaskList> {
       items: <PopupMenuEntry<String>>[
         PopupMenuItem(
           value: 'rename',
-          child: Text('rename')
+          child: Text('rename'),
+          enabled: widget.taskList.id != 0,
         ),
         PopupMenuItem(
           value: 'delete',
