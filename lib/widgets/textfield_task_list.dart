@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:taskodoro/enums/task_list_action.dart';
 import 'package:taskodoro/l10n/app_localizations.dart';
 import 'package:taskodoro/models/task_list.dart';
 import 'package:taskodoro/themes/spacing_theme.dart';
@@ -116,26 +117,26 @@ class _TextFieldTaskListState extends State<TextFieldTaskList> {
   Future<void> _showContextMenu(BuildContext buildContext, Offset position) async {
     final AppLocalizations localizations = AppLocalizations.of(context)!;
 
-    final String? selected = await showMenu<String>(
+    final TaskListAction? selected = await showMenu<TaskListAction>(
       context: context,
       position: RelativeRect.fromLTRB(position.dx, position.dy, position.dx, position.dy),
-      items: <PopupMenuEntry<String>>[
-        PopupMenuItem(
-          value: 'rename',
+      items: <PopupMenuEntry<TaskListAction>>[
+        PopupMenuItem<TaskListAction>(
+          value: TaskListAction.Rename,
           enabled: widget.taskList.id != 0,
           child: Text(localizations.rename),
         ),
-        PopupMenuItem(
-          value: 'delete',
+        PopupMenuItem<TaskListAction>(
+          value: TaskListAction.Delete,
           enabled: widget.taskList.id != 0,
           child: Text(localizations.delete),
         ),
       ]
     );
 
-    if (selected == 'rename') {
+    if (selected == TaskListAction.Rename) {
       widget.editTasklist!();
-    } else if (selected == 'delete') {
+    } else if (selected == TaskListAction.Delete) {
       widget.deleteTaskList!();
     }
   }
