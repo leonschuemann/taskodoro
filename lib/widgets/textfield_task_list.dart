@@ -114,19 +114,21 @@ class _TextFieldTaskListState extends State<TextFieldTaskList> {
   }
 
   Future<void> _showContextMenu(BuildContext buildContext, Offset position) async {
+    final AppLocalizations localizations = AppLocalizations.of(context)!;
+
     final String? selected = await showMenu<String>(
       context: context,
       position: RelativeRect.fromLTRB(position.dx, position.dy, position.dx, position.dy),
       items: <PopupMenuEntry<String>>[
         PopupMenuItem(
           value: 'rename',
-          child: Text('rename'),
           enabled: widget.taskList.id != 0,
+          child: Text(localizations.rename),
         ),
         PopupMenuItem(
           value: 'delete',
-          child: Text('delete'),
           enabled: widget.taskList.id != 0,
+          child: Text(localizations.delete),
         ),
       ]
     );

@@ -16,5 +16,7 @@
   "shortBreakTimer": "Short Break Timer",
   "amountOfRepetitions": "Amount of Repetitions",
   "addNewTask": "Add new task",
-  "addTask": "Add task"
+  "addTask": "Add task",
+  "rename": "Rename",
+  "delete": "Delete"
 }
