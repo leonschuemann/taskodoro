@@ -120,6 +120,9 @@ class _TextFieldTaskListState extends State<TextFieldTaskList> {
     final TaskListAction? selected = await showMenu<TaskListAction>(
       context: context,
       position: RelativeRect.fromLTRB(position.dx, position.dy, position.dx, position.dy),
+      shape: RoundedRectangleBorder(
+        borderRadius: SpacingTheme.roundedRectangleBorderRadius
+      ),
       items: <PopupMenuEntry<TaskListAction>>[
         PopupMenuItem<TaskListAction>(
           value: TaskListAction.Rename,
