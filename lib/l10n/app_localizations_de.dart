@@ -62,4 +62,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get addTask => 'Aufgabe hinzufügen';
+
+  @override
+  String get rename => 'Umbenennen';
+
+  @override
+  String get delete => 'Löschen';
 }

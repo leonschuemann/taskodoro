@@ -200,6 +200,33 @@ class _TasksPageState extends State<TasksPage> {
         isSelected: taskList.id == selectedTaskListId,
         localizations: localizations,
         selectTaskList: () => selectTaskList(taskList),
+        editTasklist: () {
+          setState(() {
+            taskList.isNameEditable = true;
+          });
+        },
+        deleteTaskList: () async {
+          await deleteTaskList(taskList);
+
+          if (taskList.id == selectedTaskListId) {
+            selectTaskList(taskLists[0]);
+          }
+        },
+        isEditing: taskList.isNameEditable,
+        onEditingComplete: (String newName) async {
+          taskList.name = newName;
+
+          await _updateTaskList(taskList);
+
+          setState(() {
+            taskList.isNameEditable = true;
+          });
+        },
+        onEditingCanceled: () {
+          setState(() {
+            taskList.isNameEditable = false;
+          });
+        },
       );
     }).toList();
 
@@ -305,6 +332,16 @@ class _TasksPageState extends State<TasksPage> {
     setState(() {
       isCreatingNewTaskList = false;
     });
+  }
+
+  Future<void> _updateTaskList(TaskList taskList) async {
+    await _databaseService.updateTaskList(taskList);
+    await _loadTaskLists();
+  }
+
+  Future<void> deleteTaskList(TaskList taskList) async {
+    await _databaseService.deleteTaskList(taskList);
+    await _loadTaskLists();
   }
 
   Future<void> selectTaskDate(Task task) async {

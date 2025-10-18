@@ -1,0 +1,4 @@
+enum TaskListAction {
+  Rename,
+  Delete
+}

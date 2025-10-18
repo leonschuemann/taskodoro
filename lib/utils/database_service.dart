@@ -286,4 +286,25 @@ class DatabaseService {
 
     return id;
   }
+
+  Future<void> updateTaskList(TaskList taskList) async {
+    final Database db = await _databaseService.database;
+
+    await db.update(
+      'taskLists',
+      taskList.toDatabaseMap(),
+      where: 'id = ?',
+      whereArgs: <int>[taskList.id!],
+    );
+  }
+
+  Future<void> deleteTaskList(TaskList taskList) async {
+    final Database db = await _databaseService.database;
+
+    await db.delete(
+      'taskLists',
+      where: 'id = ?',
+      whereArgs: <int>[taskList.id!],
+    );
+  }
 }

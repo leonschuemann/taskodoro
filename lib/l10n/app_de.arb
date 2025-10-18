@@ -16,5 +16,7 @@
   "shortBreakTimer": "Kurze Pausenzeit",
   "amountOfRepetitions": "Anzahl der Wiederholungen",
   "addNewTask": "Neue Aufgabe hinzufügen",
-  "addTask": "Aufgabe hinzufügen"
+  "addTask": "Aufgabe hinzufügen",
+  "rename": "Umbenennen",
+  "delete": "Löschen"
 }
